@@ -27,11 +27,11 @@ const Header = () => {
             </div>
             
             <div className="relative">
-              <button className="flex items-center space-x-1">
+              <Link to="/login" className="flex items-center space-x-1">
                 <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center">
                   <span className="text-sm font-medium">U</span>
                 </div>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
