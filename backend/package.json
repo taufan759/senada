@@ -4,7 +4,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "node index.js",
+    "seed": "node seeder/userSeeder.js",
+    "seed:force": "node seeder/userSeeder.js --force",
+    "seed:help": "node seeder/userSeeder.js --help",
+    "create:admin": "node createSuperAdmin.js"
   },
   "keywords": [],
   "author": "",
