@@ -2,35 +2,198 @@ import { useState } from 'react';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import Modal from '../components/Element/Modal';
-import { ChevronDownIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { DialogTitle } from '@headlessui/react';
+import AppSettings from '../AppSettings';
+import { useEffect } from 'react';
 
 const Dashboard = () => {
-  // Data dummy untuk chart
-  const monthlyData = [
-    { month: 'Jan', income: 2500000, expense: 1200000 },
-    { month: 'Feb', income: 2300000, expense: 1900000 },
-    { month: 'Mar', income: 2400000, expense: 1500000 },
-    { month: 'Apr', income: 2600000, expense: 1700000 },
-    { month: 'Mei', income: 2700000, expense: 1400000 },
-    { month: 'Jun', income: 2900000, expense: 1800000 },
+  const [type, setType] = useState('');
+  const [category, setCategory] = useState('');
+  const [date, setDate] = useState('');
+  const [transactionName, setTransactionName] = useState('');
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
+
+  const [transactions, setTransactions] = useState([]);
+
+  // menjalankan fungsi saat komponen pertama kali dimuat
+  useEffect(() => {
+    getTransactions();
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    try {
+      // input transaksi ke database
+      fetch(`${AppSettings.api}/transactions/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          type: type,
+          category: category,
+          date: date,
+          transactionName: transactionName,
+          amount: amount,
+          description: description,
+        }),
+      });
+
+      alert('Transaction added successfully!');
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+    }
+  }
+
+  // mengambil data transaksi dari database
+  const getTransactions = async () => {
+    try {
+      // ambil data transaksi dari API
+      const response = await fetch(`${AppSettings.api}/transactions`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        }
+      });
+
+      const data = await response.json();
+      // Format tanggal menjadi dd/mm/yyyy
+      const formattedData = data.map((transaction) => ({
+        ...transaction,
+        date: new Date(transaction.date).toLocaleDateString('id-ID', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }),
+      }));
+
+      // Set data transaksi ke state transactions
+      setTransactions(formattedData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Generate monthly data dari data transactions untuk menampilkan grafik
+  // dengan format { month: 'Jan', income: 0, expense: 0 }
+  const monthlyData = (() => {
+    // inisialisasi tanggal sekarang dan tahun saat ini
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // inisialisasi nama bulan
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
+
+    // mempersiapkan data untuk setiap bulan
+    const data = Array.from({ length: 6 }, (_, i) => ({
+      month: monthNames[i],
+      income: 0,
+      expense: 0,
+    }));
+
+    transactions.forEach((t) => {
+      // mengambil tanggal dari transaksi
+      const [day, month, year] = t.date.split('/');
+      const tDate = new Date(`${year}-${month}-${day}`);
+
+      // hanya mengambil data untuk tahun saat ini
+      if (tDate.getFullYear() === currentYear) {
+        const idx = tDate.getMonth();
+        if (t.type === 'Income') {
+          data[idx].income += Number(t.amount);
+        } else if (t.type === 'Expense') {
+          data[idx].expense += Number(t.amount);
+        }
+      }
+    });
+
+    return data;
+  })();
+
+  // Generate category pengeluaran dari transactions
+  const categoryTotals = transactions.reduce((acc, transaction) => {
+    if (transaction.type === 'Expense') {
+      acc[transaction.category] = (acc[transaction.category] || 0) + Number(transaction.amount);
+    }
+    return acc;
+  }, {});
+
+  // Hitung total pengeluaran
+  const totalExpense = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
+
+  const categoryColors = [
+    '#F9A826',
+    '#2E5EAA',
+    '#FF6B6B',
+    '#4ECDC4',
+    '#A5A5A5',
   ];
 
-  const categoryData = [
-    { name: 'Makanan', percentage: 30, color: '#F9A826' },
-    { name: 'Transportasi', percentage: 25, color: '#2E5EAA' },
-    { name: 'Belanja', percentage: 20, color: '#FF6B6B' },
-    { name: 'Hiburan', percentage: 15, color: '#4ECDC4' },
-    { name: 'Lainnya', percentage: 10, color: '#A5A5A5' },
-  ];
+  // membuat format data kategori untuk chart
+  const categoryData = Object.entries(categoryTotals).map(([name, amount], idx) => ({
+    name,
+    percentage: totalExpense ? Math.round((amount / totalExpense) * 100) : 0,
+    color: categoryColors[idx % categoryColors.length],
+  }));
 
-  const transactions = [
-    { id: 1, date: '08/05/2025', description: 'Makan Siang', amount: -75000, category: 'Makanan' },
-    { id: 2, date: '07/05/2025', description: 'Gaji Bulanan', amount: 5000000, category: 'Pendapatan' },
-    { id: 3, date: '06/05/2025', description: 'Bensin', amount: -150000, category: 'Transportasi' },
-    { id: 4, date: '05/05/2025', description: 'Belanja Bulanan', amount: -450000, category: 'Belanja' },
-    { id: 5, date: '04/05/2025', description: 'Pembayaran Listrik', amount: -250000, category: 'Tagihan' },
-  ];
+
+  // Hitung total pemasukan bulan ini
+  const cashFlowThisMonth = (type) => {
+    // Hitung pemasukan bulan ini dan bulan lalu
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+    const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+
+    const cashFlowThisMonth = transactions
+      .filter(t => {
+        if (t.type !== type) return false;
+        const [day, month, year] = t.date.split('/');
+        const tDate = new Date(`${year}-${month}-${day}`);
+        return tDate.getMonth() === thisMonth && tDate.getFullYear() === thisYear;
+      })
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const cashFlowLastMonth = transactions
+      .filter(t => {
+        if (t.type !== type) return false;
+        const [day, month, year] = t.date.split('/');
+        const tDate = new Date(`${year}-${month}-${day}`);
+        return tDate.getMonth() === lastMonth && tDate.getFullYear() === lastMonthYear;
+      })
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    if (cashFlowLastMonth === 0) return <span className='text-blue-500'>Baru bulan ini</span>;
+    const percent = ((cashFlowThisMonth - cashFlowLastMonth) / cashFlowLastMonth) * 100;
+    const result = `${percent > 0 ? '+' : ''}${percent.toFixed(1)}`;
+
+    if (percent > 0) {
+      return (
+        <div className={`flex items-center ${type === 'Income' ? 'text-green-500' : 'text-red-500'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+          </svg>
+          <span>{result}% dibanding bulan lalu</span>
+        </div>
+      );
+    } else if (percent < 0) {
+      return (
+        <div className={`flex items-center ${type === 'Income' ? 'text-red-500' : 'text-green-500'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clipRule="evenodd" />
+          </svg>
+          <span>{result}% dibanding bulan lalu</span>
+        </div>
+      );
+    } else {
+      return <span className='text-blue-500'>{result}% dibanding bulan lalu</span>;
+    }
+  }
+
 
   // Format angka ke format rupiah
   const formatCurrency = (amount) => {
@@ -50,84 +213,137 @@ const Dashboard = () => {
           <div className="grid grid-cols-2">
             <h1 className="text-3xl font-bold mb-8">Dashboard Keuangan</h1>
             <Modal>
-
-              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                    Type
-                  </label>
-                  <div className="grid grid-cols-1">
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                      <option>Income</option>
-                      <option>Expense</option>
-                    </select>
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                    />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label htmlFor="type" className="block text-sm/6 font-medium text-gray-900">
+                      Type
+                    </label>
+                    <div className="grid grid-cols-1">
+                      <select
+                        id="type"
+                        name="type"
+                        autoComplete="type-name"
+                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                      >
+                        <option value="">Pilih Type</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
 
-                <div className="sm:col-span-3">
-                  <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                    Category
-                  </label>
-                  <div className="grid grid-cols-1">
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                      <option>Dining</option>
-                      <option>Fitness</option>
-                    </select>
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                    />
+                  <div className="sm:col-span-3">
+                    <label htmlFor="category" className="block text-sm/6 font-medium text-gray-900">
+                      Category
+                    </label>
+                    <div className="grid grid-cols-1">
+                      <select
+                        id="category"
+                        name="category"
+                        autoComplete="category-name"
+                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                      >
+                        <option value="">Pilih Category</option>
+                        <option value="Dining">Dining</option>
+                        <option value="Fitness">Fitness</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-                <div className="sm:col-span-3">
-                  <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
-                    Keterangan
-                  </label>
-                  <div>
-                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                      <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        placeholder="janesmith"
-                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                      />
+
+                  <div className="sm:col-span-3">
+                    <label htmlFor="date" className="block text-sm/6 font-medium text-gray-900">
+                      Date
+                    </label>
+                    <div>
+                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <input
+                          id="date"
+                          name="date"
+                          type="date"
+                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          onChange={(e) => setDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label htmlFor="amount" className="block text-sm/6 font-medium text-gray-900">
+                      Amount
+                    </label>
+                    <div>
+                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <input
+                          id="amount"
+                          name="amount"
+                          type="number"
+                          placeholder="0.00"
+                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          onChange={(e) => setAmount(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-6">
+                    <label htmlFor="transaction" className="block text-sm/6 font-medium text-gray-900">
+                      Transaction Name
+                    </label>
+                    <div>
+                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <input
+                          id="transaction"
+                          name="transaction"
+                          type="text"
+                          placeholder="Masukkan nama transaksi"
+                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          onChange={(e) => setTransactionName(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-6">
+                    <label htmlFor="note" className="block text-sm/6 font-medium text-gray-900">
+                      Desciption
+                    </label>
+                    <div>
+                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <textarea
+                          id="note"
+                          name="note"
+                          rows="3"
+                          placeholder="Tambahkan catatan jika perlu"
+                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          onChange={(e) => setDescription(e.target.value)}
+                        ></textarea>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
-                    Amount
-                  </label>
-                  <div>
-                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                      <input
-                        id="username"
-                        name="username"
-                        type="number"
-                        placeholder="janesmith"
-                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                      />
-                    </div>
-                  </div>
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="submit"
+                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    data-autofocus
+                    onClick={() => setOpen(false)}
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                  >
+                    Cancel
+                  </button>
                 </div>
-              </div>
-
+              </form>
             </Modal>
           </div>
 
@@ -141,14 +357,24 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-2xl font-bold">{formatCurrency(4325000)}</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(
+                    transactions.reduce((total, t) => {
+                      if (t.type === 'Income') return total + Number(t.amount);
+                      if (t.type === 'Expense') return total - Number(t.amount);
+                      return total;
+                    }, 0)
+                  )}
+                </p>
               </div>
-              <div className="flex items-center text-green-500">
+              {/* <div className="flex items-center text-green-500">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
                 </svg>
-                <span>+8.2% dibanding bulan lalu</span>
-              </div>
+                <span>
+                  +5.3% dibanding bulan lalu
+                </span>
+              </div> */}
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -159,14 +385,23 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-2xl font-bold">{formatCurrency(5000000)}</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(
+                    transactions
+                      .filter((t) => {
+                        const now = new Date();
+                        const tDate = new Date(t.date.split('/').reverse().join('-'));
+                        return (
+                          t.type === 'Income' &&
+                          tDate.getMonth() === now.getMonth() &&
+                          tDate.getFullYear() === now.getFullYear()
+                        );
+                      })
+                      .reduce((sum, t) => sum + Number(t.amount), 0)
+                  )}
+                </p>
               </div>
-              <div className="flex items-center text-green-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
-                </svg>
-                <span>+5.3% dibanding bulan lalu</span>
-              </div>
+              {cashFlowThisMonth('Income')}
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -177,14 +412,23 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="mb-2">
-                <p className="text-2xl font-bold">{formatCurrency(2675000)}</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(
+                    transactions
+                      .filter((t) => {
+                        const now = new Date();
+                        const tDate = new Date(t.date.split('/').reverse().join('-'));
+                        return (
+                          t.type === 'Expense' &&
+                          tDate.getMonth() === now.getMonth() &&
+                          tDate.getFullYear() === now.getFullYear()
+                        );
+                      })
+                      .reduce((sum, t) => sum + Number(t.amount), 0)
+                  )}
+                </p>
               </div>
-              <div className="flex items-center text-red-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clipRule="evenodd" />
-                </svg>
-                <span>-2.7% dibanding bulan lalu</span>
-              </div>
+              {cashFlowThisMonth('Expense')}
             </div>
           </div>
 
@@ -308,14 +552,17 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 text-sm">
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  {/* tampilkan maksimal 5 data */}
+                  {transactions.slice(0, 5).map((transaction, idx) => (
+                    <tr key={transaction.transactionId || idx} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="py-3 px-6 text-left">{transaction.date}</td>
                       <td className="py-3 px-6 text-left">{transaction.description}</td>
                       <td className="py-3 px-6 text-left">{transaction.category}</td>
-                      <td className={`py-3 px-6 text-right ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                      <td className={`py-3 px-6 text-right ${transaction.type === 'Income' ? 'text-green-600' : 'text-red-600'
                         }`}>
-                        {formatCurrency(transaction.amount)}
+                        {
+                          transaction.type === 'Income' ? formatCurrency(transaction.amount) : '-' + formatCurrency(transaction.amount)
+                        }
                       </td>
                     </tr>
                   ))}
@@ -328,10 +575,10 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </main>
+      </main >
 
       <Footer />
-    </div>
+    </div >
   );
 };
 
