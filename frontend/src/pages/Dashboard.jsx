@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
+import Modal from '../components/Element/Modal';
+import { ChevronDownIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { DialogTitle } from '@headlessui/react';
 
 const Dashboard = () => {
   // Data dummy untuk chart
@@ -12,7 +15,7 @@ const Dashboard = () => {
     { month: 'Mei', income: 2700000, expense: 1400000 },
     { month: 'Jun', income: 2900000, expense: 1800000 },
   ];
-  
+
   const categoryData = [
     { name: 'Makanan', percentage: 30, color: '#F9A826' },
     { name: 'Transportasi', percentage: 25, color: '#2E5EAA' },
@@ -20,7 +23,7 @@ const Dashboard = () => {
     { name: 'Hiburan', percentage: 15, color: '#4ECDC4' },
     { name: 'Lainnya', percentage: 10, color: '#A5A5A5' },
   ];
-  
+
   const transactions = [
     { id: 1, date: '08/05/2025', description: 'Makan Siang', amount: -75000, category: 'Makanan' },
     { id: 2, date: '07/05/2025', description: 'Gaji Bulanan', amount: 5000000, category: 'Pendapatan' },
@@ -28,7 +31,7 @@ const Dashboard = () => {
     { id: 4, date: '05/05/2025', description: 'Belanja Bulanan', amount: -450000, category: 'Belanja' },
     { id: 5, date: '04/05/2025', description: 'Pembayaran Listrik', amount: -250000, category: 'Tagihan' },
   ];
-  
+
   // Format angka ke format rupiah
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('id-ID', {
@@ -41,11 +44,93 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <main className="flex-grow bg-gray-100 py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8">Dashboard Keuangan</h1>
-          
+          <div className="grid grid-cols-2">
+            <h1 className="text-3xl font-bold mb-8">Dashboard Keuangan</h1>
+            <Modal>
+
+              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                    Type
+                  </label>
+                  <div className="grid grid-cols-1">
+                    <select
+                      id="country"
+                      name="country"
+                      autoComplete="country-name"
+                      className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    >
+                      <option>Income</option>
+                      <option>Expense</option>
+                    </select>
+                    <ChevronDownIcon
+                      aria-hidden="true"
+                      className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                    Category
+                  </label>
+                  <div className="grid grid-cols-1">
+                    <select
+                      id="country"
+                      name="country"
+                      autoComplete="country-name"
+                      className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    >
+                      <option>Dining</option>
+                      <option>Fitness</option>
+                    </select>
+                    <ChevronDownIcon
+                      aria-hidden="true"
+                      className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-3">
+                  <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
+                    Keterangan
+                  </label>
+                  <div>
+                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                      <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        placeholder="janesmith"
+                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
+                    Amount
+                  </label>
+                  <div>
+                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                      <input
+                        id="username"
+                        name="username"
+                        type="number"
+                        placeholder="janesmith"
+                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </Modal>
+          </div>
+
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -65,7 +150,7 @@ const Dashboard = () => {
                 <span>+8.2% dibanding bulan lalu</span>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-medium text-gray-600">Pemasukan Bulan Ini</h3>
@@ -83,7 +168,7 @@ const Dashboard = () => {
                 <span>+5.3% dibanding bulan lalu</span>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-medium text-gray-600">Pengeluaran Bulan Ini</h3>
@@ -102,26 +187,26 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold mb-4">Pemasukan & Pengeluaran</h2>
-              
+
               {/* Simple bar chart visualization */}
               <div className="h-64">
                 <div className="flex h-full items-end space-x-2">
                   {monthlyData.map((data, index) => (
                     <div key={index} className="flex-1 flex flex-col items-center">
                       <div className="w-full flex flex-col-reverse space-y-reverse space-y-1">
-                        <div 
-                          className="w-full bg-secondary rounded-t" 
-                          style={{height: `${(data.expense / 3000000) * 100}%`}}
+                        <div
+                          className="w-full bg-secondary rounded-t"
+                          style={{ height: `${(data.expense / 3000000) * 100}%` }}
                           title={`Pengeluaran: ${formatCurrency(data.expense)}`}
                         ></div>
-                        <div 
-                          className="w-full bg-primary rounded-t" 
-                          style={{height: `${(data.income / 3000000) * 100}%`}}
+                        <div
+                          className="w-full bg-primary rounded-t"
+                          style={{ height: `${(data.income / 3000000) * 100}%` }}
                           title={`Pemasukan: ${formatCurrency(data.income)}`}
                         ></div>
                       </div>
@@ -130,7 +215,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="flex justify-center mt-4 space-x-6">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-primary rounded-full mr-2"></div>
@@ -142,10 +227,10 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold mb-4">Kategori Pengeluaran</h2>
-              
+
               {/* Simple donut chart visualization */}
               <div className="flex justify-center">
                 <div className="relative w-52 h-52">
@@ -153,65 +238,65 @@ const Dashboard = () => {
                     {categoryData.reduce((acc, category, i) => {
                       const prevTotal = acc.total;
                       const newTotal = prevTotal + category.percentage;
-                      
+
                       // Create a donut slice
                       const startAngle = prevTotal * 3.6; // 3.6 degrees per percentage point
                       const endAngle = newTotal * 3.6;
-                      
+
                       // Convert angles to radians
                       const startRad = (startAngle - 90) * Math.PI / 180;
                       const endRad = (endAngle - 90) * Math.PI / 180;
-                      
+
                       // Calculate points
                       const x1 = 50 + 40 * Math.cos(startRad);
                       const y1 = 50 + 40 * Math.sin(startRad);
                       const x2 = 50 + 40 * Math.cos(endRad);
                       const y2 = 50 + 40 * Math.sin(endRad);
-                      
+
                       // Create the arc
                       const largeArcFlag = category.percentage > 50 ? 1 : 0;
-                      
+
                       const pathData = `
                         M 50 50
                         L ${x1} ${y1}
                         A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2}
                         Z
                       `;
-                      
+
                       acc.paths.push(
-                        <path 
-                          key={i} 
-                          d={pathData} 
-                          fill={category.color} 
-                          stroke="#fff" 
+                        <path
+                          key={i}
+                          d={pathData}
+                          fill={category.color}
+                          stroke="#fff"
                           strokeWidth="1"
                         />
                       );
-                      
+
                       return { paths: acc.paths, total: newTotal };
                     }, { paths: [], total: 0 }).paths}
-                    
+
                     {/* Inner circle to create donut */}
                     <circle cx="50" cy="50" r="25" fill="white" />
                   </svg>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-2 mt-4">
                 {categoryData.map((category, index) => (
                   <div key={index} className="flex items-center">
-                    <div className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: category.color}}></div>
+                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: category.color }}></div>
                     <span className="text-sm">{category.name} ({category.percentage}%)</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          
+
           {/* Recent Transactions */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold mb-4">Transaksi Terbaru</h2>
-            
+
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white">
                 <thead>
@@ -228,9 +313,8 @@ const Dashboard = () => {
                       <td className="py-3 px-6 text-left">{transaction.date}</td>
                       <td className="py-3 px-6 text-left">{transaction.description}</td>
                       <td className="py-3 px-6 text-left">{transaction.category}</td>
-                      <td className={`py-3 px-6 text-right ${
-                        transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
+                      <td className={`py-3 px-6 text-right ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
                         {formatCurrency(transaction.amount)}
                       </td>
                     </tr>
@@ -238,14 +322,14 @@ const Dashboard = () => {
                 </tbody>
               </table>
             </div>
-            
+
             <div className="mt-4 text-center">
               <button className="text-primary hover:underline">Lihat Semua Transaksi</button>
             </div>
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
