@@ -2,15 +2,11 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import { useState } from 'react';
 
-const Modal = ({ children }) => {
-  const [open, setOpen] = useState(false)
+const Modal = ({ children, open, setOpen }) => {
+  // const [open, setOpen] = useState(false)
 
   return (
     <>
-      <button
-        className='place-self-end -translate-y-5 bg-secondary hover:bg-secondary-light text-white px-6 py-3 rounded-md font-medium transition-colors'
-        onClick={() => setOpen(true)}
-      >Tambah Transaksi</button>
       <Dialog open={open} onClose={setOpen} className="relative z-10">
         <DialogBackdrop
           transition

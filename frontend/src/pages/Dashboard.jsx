@@ -4,6 +4,11 @@ import Footer from '../components/common/Footer';
 import Modal from '../components/Element/Modal';
 import AppSettings from '../AppSettings';
 import { useEffect } from 'react';
+import SelectInput from '../components/Element/selectInput';
+import InputDate from '../components/Element/inputDate';
+import InputNumber from '../components/Element/InputNumber';
+import InputText from '../components/Element/InputText';
+import TextArea from '../components/Element/TextArea';
 
 const Dashboard = () => {
   const [type, setType] = useState('');
@@ -15,6 +20,7 @@ const Dashboard = () => {
 
   const [transactions, setTransactions] = useState([]);
 
+  const [addOpen, setAddOpen] = useState(false)
   // menjalankan fungsi saat komponen pertama kali dimuat
   useEffect(() => {
     getTransactions();
@@ -212,118 +218,64 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2">
             <h1 className="text-3xl font-bold mb-8">Dashboard Keuangan</h1>
-            <Modal>
+
+            <button
+              className='place-self-end -translate-y-5 bg-secondary hover:bg-secondary-light text-white px-3 py-2 rounded-md font-medium transition-colors'
+              onClick={() => setAddOpen(true)}
+            >Tambah Transaksi</button>
+
+            {/* Add Transaction Modal */}
+            <Modal open={addOpen} setOpen={setAddOpen}>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
                   <div className="sm:col-span-3">
                     <label htmlFor="type" className="block text-sm/6 font-medium text-gray-900">
                       Type
                     </label>
-                    <div className="grid grid-cols-1">
-                      <select
-                        id="type"
-                        name="type"
-                        autoComplete="type-name"
-                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                      >
-                        <option value="">Pilih Type</option>
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                      </select>
-                    </div>
+                    <SelectInput name="type" value={type} autoComplete="type-name" onChange={(e) => setType(e.target.value)}>
+                      <option value="">Pilih Type</option>
+                      <option value="Income">Income</option>
+                      <option value="Expense">Expense</option>
+                    </SelectInput>
                   </div>
 
                   <div className="sm:col-span-3">
                     <label htmlFor="category" className="block text-sm/6 font-medium text-gray-900">
                       Category
                     </label>
-                    <div className="grid grid-cols-1">
-                      <select
-                        id="category"
-                        name="category"
-                        autoComplete="category-name"
-                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                      >
-                        <option value="">Pilih Category</option>
-                        <option value="Dining">Dining</option>
-                        <option value="Fitness">Fitness</option>
-                      </select>
-                    </div>
+                    <SelectInput name="category" value={category} autoComplete="category-name" onChange={(e) => setCategory(e.target.value)}>
+                      <option value="">Pilih Category</option>
+                      <option value="Dining">Dining</option>
+                      <option value="Fitness">Fitness</option>
+                    </SelectInput>
                   </div>
 
                   <div className="sm:col-span-3">
                     <label htmlFor="date" className="block text-sm/6 font-medium text-gray-900">
                       Date
                     </label>
-                    <div>
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                        <input
-                          id="date"
-                          name="date"
-                          type="date"
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                          onChange={(e) => setDate(e.target.value)}
-                        />
-                      </div>
-                    </div>
+                    <InputDate name="date" onChange={(e) => setDate(e.target.value)} />
                   </div>
 
                   <div className="sm:col-span-3">
                     <label htmlFor="amount" className="block text-sm/6 font-medium text-gray-900">
                       Amount
                     </label>
-                    <div>
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                        <input
-                          id="amount"
-                          name="amount"
-                          type="number"
-                          placeholder="0.00"
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                          onChange={(e) => setAmount(e.target.value)}
-                        />
-                      </div>
-                    </div>
+                    <InputNumber name="amount" onChange={(e) => setAmount(e.target.value)} placeHolder="0.00" />
                   </div>
 
                   <div className="sm:col-span-6">
                     <label htmlFor="transaction" className="block text-sm/6 font-medium text-gray-900">
                       Transaction Name
                     </label>
-                    <div>
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                        <input
-                          id="transaction"
-                          name="transaction"
-                          type="text"
-                          placeholder="Masukkan nama transaksi"
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                          onChange={(e) => setTransactionName(e.target.value)}
-                        />
-                      </div>
-                    </div>
+                    <InputText name="transaction" onChange={(e) => setTransactionName(e.target.value)} placeHolder="Masukkan Nama Transaksi" />
                   </div>
 
                   <div className="sm:col-span-6">
                     <label htmlFor="note" className="block text-sm/6 font-medium text-gray-900">
                       Desciption
                     </label>
-                    <div>
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                        <textarea
-                          id="note"
-                          name="note"
-                          rows="3"
-                          placeholder="Tambahkan catatan jika perlu"
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                          onChange={(e) => setDescription(e.target.value)}
-                        ></textarea>
-                      </div>
-                    </div>
+                    <TextArea name="note" onChange={(e) => setDescription(e.target.value)} placeHolder="Tambahkan catatan jika perlu" />
                   </div>
                 </div>
 
