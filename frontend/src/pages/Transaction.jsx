@@ -11,6 +11,7 @@ import TextArea from "../components/Element/TextArea";
 import SelectInput from "../components/Element/selectInput";
 
 const Transaction = () => {
+  const [transactionId, setTransactionId] = useState('');
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
@@ -21,8 +22,16 @@ const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
 
   const [addOpen, setAddOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false);
 
   let filterStatus = true;
+
+  const [filterValues, setFilterValues] = useState({
+    type: '',
+    category: '',
+    dateStart: '',
+    dateEnd: ''
+  });
   // menjalankan fungsi saat komponen pertama kali dimuat
   useEffect(() => {
     getTransactions();
@@ -50,10 +59,13 @@ const Transaction = () => {
       });
 
       alert('Transaction added successfully!');
+      setAddOpen(false);
+      getTransactions();
     } catch (error) {
       console.error("Error adding transaction:", error);
     }
   }
+
   // mengambil data transaksi dari database
   const getTransactions = async () => {
     try {
@@ -84,6 +96,76 @@ const Transaction = () => {
     }
   };
 
+  const setInput = (transactionId) => {
+    setUpdateOpen(true);
+    // Ambil data transaksi berdasarkan transactionId
+    const transaction = transactions.find(t => t.transactionId === transactionId);
+    if (!transaction) {
+      alert('Transaction not found!');
+      return;
+    }
+    // Set data transaksi ke state
+    setTransactionId(transaction.transactionId);
+    setType(transaction.type);
+    setCategory(transaction.category);
+    setDate(transaction.date);
+    setTransactionName(transaction.transactionName);
+    setAmount(transaction.amount);
+    setDescription(transaction.description);
+  };
+
+
+  const handleSubmitUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch(`${AppSettings.api}/transactions/update/${transactionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          type: type,
+          category: category,
+          date: date.split('/').concat().reverse().join('-'),
+          transactionName: transactionName,
+          amount: amount,
+          description: description,
+        }),
+      });
+
+      alert('Transaction Updated successfully!');
+      setUpdateOpen(false);
+      getTransactions();
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      alert('Error updating transaction: ' + error.message);
+    }
+
+  };
+
+
+  const deleteTransaction = async (transactionId) => {
+    try {
+      const response = await fetch(`${AppSettings.api}/transactions/delete/${transactionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete transaction');
+      } else {
+        alert('Transaction deleted successfully!');
+        // Refresh transactions after deletion
+        getTransactions();
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      alert('Error deleting transaction: ' + error.message);
+    }
+  };
 
   // Format angka ke format rupiah
   const formatCurrency = (amount) => {
@@ -93,31 +175,99 @@ const Transaction = () => {
       minimumFractionDigits: 0,
     }).format(amount);
   };
+  // Fungsi filter transaksi
+  const filterTransactions = ({ category = '', type = '', dateStart = '', dateEnd = '' }) => {
+    let filtered = transactions;
+
+    if (category) {
+      filtered = filtered.filter((t) =>
+        t.category.toLowerCase().includes(category.toLowerCase())
+      );
+    }
+
+    if (type) {
+      filtered = filtered.filter((t) =>
+        t.type.toLowerCase().includes(type.toLowerCase())
+      );
+    }
+
+    if (dateStart && dateEnd) {
+      // Format tanggal transaksi: dd/mm/yyyy → ubah ke Date
+      const start = new Date(dateStart);
+      const end = new Date(dateEnd);
+
+      filtered = filtered.filter((t) => {
+        const [day, month, year] = t.date.split('/');
+        const transactionDate = new Date(`${year}-${month}-${day}`);
+        return transactionDate >= start && transactionDate <= end;
+      });
+    }
+
+    setTransactions(filtered);
+  };
 
   // Menampilkan filter
   const openFilter = () => {
     const filterElement = document.getElementById('filter');
     if (filterStatus) {
-      console.log('open filter');
       filterElement.innerHTML = `
         <div class="flex justify-end gap-2 mb-4">
-          <input type="text" id="filterCategoryText" placeholder="Cari kategori..." class="border border-gray-300 rounded-md px-3 py-2" />
-          <input type="text" id="filterTypeText" placeholder="Cari type..." class="border border-gray-300 rounded-md px-3 py-2" />
-          <input type="date" id="filterDate" class="border border-gray-300 rounded-md px-3 py-2" />
+          <select id="filterType" class="border border-gray-300 rounded-md px-3 py-2">
+            <option value="">All Type</option>
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
+          <div class="flex gap-2">
+            <label for="filterDateStart" class="text-sm text-gray-700 place-self-center">From:</label>
+            <input type="date" id="filterDateStart" class="border border-gray-300 rounded-md px-3 py-2" />
+            <label for="filterDateEnd" class="text-sm text-gray-700 place-self-center">To:</label>
+            <input type="date" id="filterDateEnd" class="border border-gray-300 rounded-md px-3 py-2" />
+          </div>
           <select id="filterCategory" class="border border-gray-300 rounded-md px-3 py-2">
             <option value="">All Categories</option>
             <option value="Dining">Dining</option>
             <option value="Fitness">Fitness</option>
           </select>
-          <button class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-md" onclick="clearFilter()">Clear Filter</button>
+          <button id="clearFilterBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-md">Clear Filter</button>
         </div>
         `;
 
+      document.getElementById('filterType').onchange = (e) => {
+        filterValues.type = e.target.value;
+        filterTransactions({ type: filterValues.type, category: filterValues.category, date: filterValues.date });
+        console.log(transactions);
+      };
+      document.getElementById('filterDateStart').onchange = (e) => {
+        filterValues.dateStart = e.target.value;
+        filterTransactions(filterValues);
+      };
+
+      document.getElementById('filterDateEnd').onchange = (e) => {
+        filterValues.dateEnd = e.target.value;
+        filterTransactions(filterValues);
+      };
+      document.getElementById('filterCategory').onchange = (e) => {
+        filterValues.category = e.target.value;
+        filterTransactions({ type: filterValues.type, category: filterValues.category, date: filterValues.date });
+      };
+
+      document.getElementById('clearFilterBtn').onclick = () => {
+        document.getElementById('filterType').value = '';
+        document.getElementById('filterDateStart').value = '';
+        document.getElementById('filterDateEnd').value = '';
+        document.getElementById('filterCategory').value = '';
+
+        filterValues.type = '';
+        filterValues.dateStart = '';
+        filterValues.dateEnd = '';
+        filterValues.category = '';
+
+        getTransactions();
+      };
+
       filterStatus = false;
     } else if (!filterStatus) {
-      console.log('close filter');
       filterElement.innerHTML = '';
-
       filterStatus = true;
     }
   }
@@ -176,13 +326,13 @@ const Transaction = () => {
                         <div className="flex justify-end gap-2">
                           <button
                             className="text-blue-600 hover:text-blue-800"
-                            onClick={() => alert('Edit functionality not implemented yet')}
+                            onClick={() => setInput(transaction.transactionId)}
                           >
                             Edit
                           </button>
                           <button
                             className="text-red-600 hover:text-red-800"
-                            onClick={() => alert('Delete functionality not implemented yet')}
+                            onClick={() => deleteTransaction(transaction.transactionId)}
                           >
                             Delete
                           </button>
@@ -200,7 +350,7 @@ const Transaction = () => {
       <Footer />
 
       {/* Add Transaction Modal */}
-      <Modal open={addOpen} setOpen={setAddOpen}>
+      <Modal open={addOpen} setOpen={setAddOpen} title="Tambah Transaksi">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
             <div className="sm:col-span-3">
@@ -265,6 +415,78 @@ const Transaction = () => {
               type="button"
               data-autofocus
               onClick={() => setOpen(false)}
+              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Update Transaction Modal */}
+      <Modal open={updateOpen} setOpen={setUpdateOpen} title="Edit Transaksi">
+        <form onSubmit={handleSubmitUpdate} className="space-y-6">
+          <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <label htmlFor="type" className="block text-sm/6 font-medium text-gray-900">
+                Type
+              </label>
+              <SelectInput name="type" value={type} autoComplete="type-name" onChange={(e) => setType(e.target.value)}>
+                <option value="">Pilih Type</option>
+                <option value="Income">Income</option>
+                <option value="Expense">Expense</option>
+              </SelectInput>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="category" className="block text-sm/6 font-medium text-gray-900">
+                Category
+              </label>
+              <SelectInput name="category" value={category} autoComplete="category-name" onChange={(e) => setCategory(e.target.value)}>
+                <option value="">Pilih Category</option>
+                <option value="Dining">Dining</option>
+                <option value="Fitness">Fitness</option>
+              </SelectInput>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="date" className="block text-sm/6 font-medium text-gray-900">
+                Date
+              </label>
+              <InputDate name="date" onChange={(e) => setDate(e.target.value)} value={date.split('/').concat().reverse().join('-')} />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="amount" className="block text-sm/6 font-medium text-gray-900">
+                Amount
+              </label>
+              <InputNumber name="amount" onChange={(e) => setAmount(e.target.value)} value={amount} placeHolder="0.00" />
+            </div>
+
+            <div className="sm:col-span-6">
+              <label htmlFor="transaction" className="block text-sm/6 font-medium text-gray-900">
+                Transaction Name
+              </label>
+              <InputText name="transaction" onChange={(e) => setTransactionName(e.target.value)} value={transactionName} placeHolder="Masukkan Nama Transaksi" />
+            </div>
+            <div className="sm:col-span-6">
+              <label htmlFor="note" className="block text-sm/6 font-medium text-gray-900">
+                Description
+              </label>
+              <TextArea name="note" onChange={(e) => setDescription(e.target.value)} value={description} placeHolder="Tambahkan catatan jika perlu" />
+            </div>
+          </div>
+          <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <button
+              type="submit"
+              className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              data-autofocus
+              onClick={() => setUpdateOpen(false)}
               className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
             >
               Cancel
