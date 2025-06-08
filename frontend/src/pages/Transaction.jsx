@@ -1,6 +1,3 @@
-import Sidebar from "../components/common/Sidebar";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
 import { useEffect, useState } from "react";
 import AppSettings from "../AppSettings";
 import Modal from "../components/Element/Modal";
@@ -9,6 +6,7 @@ import InputNumber from "../components/Element/InputNumber";
 import InputText from "../components/Element/InputText";
 import TextArea from "../components/Element/TextArea";
 import SelectInput from "../components/Element/selectInput";
+import AppLayout from "../components/AppLayouts";
 
 const Transaction = () => {
   const [transactionId, setTransactionId] = useState('');
@@ -273,81 +271,71 @@ const Transaction = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <AppLayout>
+      {/* Recent Transactions */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="grid grid-cols-2">
+          <h2 className="text-xl font-bold mb-4">Transaksi Terbaru</h2>
+          <div className="flex justify-end gap-2">
+            <button
+              className="place-self-end -translate-y-5 bg-gray-500 hover:bg-gray-400 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              onClick={() => openFilter()}
+            >Filter</button>
 
-      <div className="flex flex-grow">
-        <Sidebar />
-
-        <main className="flex-grow bg-gray-50 p-6">
-          {/* Recent Transactions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="grid grid-cols-2">
-              <h2 className="text-xl font-bold mb-4">Transaksi Terbaru</h2>
-              <div className="flex justify-end gap-2">
-                <button
-                  className="place-self-end -translate-y-5 bg-gray-500 hover:bg-gray-400 text-white px-3 py-2 rounded-md font-medium transition-colors"
-                  onClick={() => openFilter()}
-                >Filter</button>
-
-                <button
-                  className='place-self-end -translate-y-5 bg-secondary hover:bg-secondary-light text-white px-3 py-2 rounded-md font-medium transition-colors'
-                  onClick={() => setAddOpen(true)}
-                >Tambah Transaksi</button>
-              </div>
-            </div>
-            <div id="filter">
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr className="bg-gray-100 text-gray-600 text-sm leading-normal">
-                    <th className="py-3 px-6 text-left">Tanggal</th>
-                    <th className="py-3 px-6 text-left">Deskripsi</th>
-                    <th className="py-3 px-6 text-left">Kategori</th>
-                    <th className="py-3 px-6 text-right">Jumlah</th>
-                    <th className="py-3 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-600 text-sm">
-                  {/* tampilkan maksimal 5 data */}
-                  {transactions.map((transaction, idx) => (
-                    <tr key={transaction.transactionId || idx} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-6 text-left">{transaction.date}</td>
-                      <td className="py-3 px-6 text-left">{transaction.description}</td>
-                      <td className="py-3 px-6 text-left">{transaction.category}</td>
-                      <td className={`py-3 px-6 text-right ${transaction.type === 'Income' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                        {
-                          transaction.type === 'Income' ? formatCurrency(transaction.amount) : '-' + formatCurrency(transaction.amount)
-                        }
-                      </td>
-                      <td>
-                        <div className="flex justify-end gap-2">
-                          <button
-                            className="text-blue-600 hover:text-blue-800"
-                            onClick={() => setInput(transaction.transactionId)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="text-red-600 hover:text-red-800"
-                            onClick={() => deleteTransaction(transaction.transactionId)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <button
+              className='place-self-end -translate-y-5 bg-secondary hover:bg-secondary-light text-white px-3 py-2 rounded-md font-medium transition-colors'
+              onClick={() => setAddOpen(true)}
+            >Tambah Transaksi</button>
           </div>
-        </main>
+        </div>
+        <div id="filter">
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr className="bg-gray-100 text-gray-600 text-sm leading-normal">
+                <th className="py-3 px-6 text-left">Tanggal</th>
+                <th className="py-3 px-6 text-left">Deskripsi</th>
+                <th className="py-3 px-6 text-left">Kategori</th>
+                <th className="py-3 px-6 text-right">Jumlah</th>
+                <th className="py-3 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-600 text-sm">
+              {/* tampilkan maksimal 5 data */}
+              {transactions.map((transaction, idx) => (
+                <tr key={transaction.transactionId || idx} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="py-3 px-6 text-left">{transaction.date}</td>
+                  <td className="py-3 px-6 text-left">{transaction.description}</td>
+                  <td className="py-3 px-6 text-left">{transaction.category}</td>
+                  <td className={`py-3 px-6 text-right ${transaction.type === 'Income' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                    {
+                      transaction.type === 'Income' ? formatCurrency(transaction.amount) : '-' + formatCurrency(transaction.amount)
+                    }
+                  </td>
+                  <td>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={() => setInput(transaction.transactionId)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-red-600 hover:text-red-800"
+                        onClick={() => deleteTransaction(transaction.transactionId)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-
-      <Footer />
 
       {/* Add Transaction Modal */}
       <Modal open={addOpen} setOpen={setAddOpen} title="Tambah Transaksi">
@@ -494,7 +482,7 @@ const Transaction = () => {
           </div>
         </form>
       </Modal>
-    </div>
+    </AppLayout>
   )
 }
 

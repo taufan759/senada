@@ -15,7 +15,7 @@ export const getUsers = async (req, res) => {
 }
 
 export const authenticate = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, } = req.body;
 
   try {
     const user = await User.findOne({ where: { email } });
@@ -26,11 +26,12 @@ export const authenticate = async (req, res) => {
 
     const userId = user.userId;
     const name = user.name;
+    const role = user.role;
 
-    const accessToken = jwt.sign({ userId, name, email }, process.env.ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.sign({ userId, name, email, role }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: '1h'
     });
-    const refreshToken = jwt.sign({ userId, name, email }, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ userId, name, email, role }, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: '7d'
     });
 

@@ -11,7 +11,8 @@ export const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    req.userId = decoded.id; // Attach user ID to request object
+    req.user = decoded; // Attach user to request object
     next(); // Proceed to the next middleware or route handler
   });
+
 }
