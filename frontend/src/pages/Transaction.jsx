@@ -347,8 +347,8 @@ const Transaction = () => {
               </label>
               <SelectInput name="type" value={type} autoComplete="type-name" onChange={(e) => setType(e.target.value)}>
                 <option value="">Pilih Type</option>
-                <option value="Income">Income</option>
-                <option value="Expense">Expense</option>
+                <option value="Income">💰Income</option>
+                <option value="Expense">💸Expense</option>
               </SelectInput>
             </div>
 
@@ -358,8 +358,23 @@ const Transaction = () => {
               </label>
               <SelectInput name="category" value={category} autoComplete="category-name" onChange={(e) => setCategory(e.target.value)}>
                 <option value="">Pilih Category</option>
-                <option value="Dining">Dining</option>
-                <option value="Fitness">Fitness</option>
+                <option value="Gaji">💰Gaji</option>
+                <option value="Bonus">🪙Bonus</option>
+                <option value="Dividen">💹Dividen</option>
+                <option value="Listrik">💡Listrik</option>
+                <option value="Uang Saku">💵Uang Saku</option>
+                <option value="Makan">🍔Makan</option>
+                <option value="Pakaian">👕Pakaian</option>
+                <option value="Pendidikan">🎓Pendidikan</option>
+                <option value="Peliharaan">🐶Peliharaan</option>
+                <option value="Hiburan">🎥Hiburan</option>
+                <option value="Kebugaran">🏃Kebugaran</option>
+                <option value="Hadiah">🎁Hadiah</option>
+                <option value="Transportasi">🚗Transportasi</option>
+                <option value="Penginapan">🏨Penginapan</option>
+                <option value="Kesehatan">🏥Kesehatan</option>
+                <option value="Utilitas">🔌Utilitas</option>
+                <option value="Lainnya">💬Lainnya</option>
               </SelectInput>
             </div>
 
@@ -402,7 +417,7 @@ const Transaction = () => {
             <button
               type="button"
               data-autofocus
-              onClick={() => setOpen(false)}
+              onClick={() => setAddOpen(false)}
               className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
             >
               Cancel

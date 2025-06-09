@@ -1,8 +1,9 @@
 import express from 'express';
 import { authenticate, getUsers, register } from '../controllers/UserController.js';
-import { addTransaction, deleteTransaction, getTransaction, updateTransaction } from '../controllers/TransactionController.js';
+import { addTransaction, budgetTransactions, deleteTransaction, getTransaction, updateTransaction } from '../controllers/TransactionController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import authorize from '../middleware/authorize.js';
+import { addBudget, deleteBudget, getBudget, updateBudget } from '../controllers/BudgetController.js';
 
 const router = express.Router();
 
@@ -16,6 +17,14 @@ router.get('/transactions', getTransaction);
 router.post('/transactions/add', addTransaction);
 router.put('/transactions/update/:transactionId', updateTransaction);
 router.delete('/transactions/delete/:transactionId', deleteTransaction);
+
+router.use('/budget', verifyToken, authorize('user', 'admin'));
+
+router.get('/budget', getBudget);
+router.post('/budget/add', addBudget);
+router.delete('/budget/delete/:budgetId', deleteBudget);
+router.put('/budget/update/:budgetId', updateBudget);
+router.get('/budget/transactions', budgetTransactions);
 
 router.post('/authenticate', authenticate);
 router.post('/register', register);
