@@ -15,12 +15,15 @@ const seedUsers = async () => {
     await db.sync();
     console.log('Database synced');
     
-    // Check if users already exist
+    // **FORCE DELETE ALL EXISTING USERS**
     const existingUsers = await User.count();
-    
     if (existingUsers > 0) {
-      console.log(`Database already has ${existingUsers} users. Skipping seed...`);
-      process.exit(0);
+      console.log(`🗑️  Found ${existingUsers} existing users. Deleting all...`);
+      await User.destroy({
+        where: {},
+        truncate: true // This will reset the auto-increment
+      });
+      console.log('✅ All existing users deleted!');
     }
     
     // Hash password
@@ -28,17 +31,11 @@ const seedUsers = async () => {
     const hashedPassword = await bcrypt.hash('password123', salt);
     const adminHashedPassword = await bcrypt.hash('admin123456', salt);
     
-    // Sample users data
+    // Sample users data - hanya admin dan user
     const usersData = [
       {
-        name: 'Super Admin',
+        name: 'Admin Senada',
         email: 'admin@senada.com',
-        password: adminHashedPassword,
-        role: 'super_admin'
-      },
-      {
-        name: 'Admin User',
-        email: 'admin.user@senada.com',
         password: adminHashedPassword,
         role: 'admin'
       },
@@ -83,14 +80,21 @@ const seedUsers = async () => {
     // Create users
     const createdUsers = await User.bulkCreate(usersData);
     
-    console.log('✅ Users seeded successfully!');
-    console.log(`📊 Created ${createdUsers.length} users`);
-    console.log('\n👤 Admin Accounts:');
-    console.log('📧 Super Admin: admin@senada.com | 🔑 Password: admin123456');
-    console.log('📧 Admin: admin.user@senada.com | 🔑 Password: admin123456');
+    console.log('\n🎉 ===== SEEDING COMPLETED ===== 🎉');
+    console.log(`📊 Created ${createdUsers.length} new users`);
+    console.log('\n👤 Admin Account:');
+    console.log('📧 Email: admin@senada.com');
+    console.log('🔑 Password: admin123456');
+    console.log('🛡️  Role: admin');
     console.log('\n👥 Regular Users:');
-    console.log('🔑 All regular users password: password123');
-    console.log('\n⚠️  Please change admin passwords after first login!');
+    console.log('🔑 Password for all users: password123');
+    console.log('👤 Role: user');
+    console.log('\n📋 User List:');
+    createdUsers.forEach((user, index) => {
+      console.log(`${index + 1}. ${user.name} (${user.email}) - ${user.role}`);
+    });
+    console.log('\n⚠️  Please change admin password after first login!');
+    console.log('✅ Database successfully reset and seeded!');
     
     process.exit(0);
     
@@ -100,5 +104,4 @@ const seedUsers = async () => {
   }
 };
 
-// Run seeder
 seedUsers();
