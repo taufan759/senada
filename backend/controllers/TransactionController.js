@@ -1,5 +1,6 @@
 import Transaction from "../models/TransactionModel.js";
 import { jwtDecode } from 'jwt-decode';
+import { Op, Sequelize } from 'sequelize';
 
 
 export const getTransaction = async (req, res) => {
@@ -27,6 +28,28 @@ export const getTransaction = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ message: error.message });
   }
+}
+
+export const budgetTransactions = async (req, res) => {
+  const { month, year } = req.query;
+  const authHeader = req.headers.authorization;
+  let userId;
+  userId = jwtDecode(authHeader.split(' ')[1], process.env.ACCESS_TOKEN_SECRET).userId;
+  console.log(month, year, userId);
+  const transactions = await Transaction.findAll({
+    where: {
+      userId,
+      date: {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('MONTH', Sequelize.col('date')), month),
+          Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('date')), year)
+        ]
+      }
+    },
+    attributes: ['transactionId', 'type', 'category', 'date', 'amount', 'transactionName', 'description', 'status'],
+    order: [['date', 'DESC']],
+  });
+  res.status(200).json(transactions);
 }
 
 export const addTransaction = async (req, res) => {
