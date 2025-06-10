@@ -1,5 +1,5 @@
 import AppLayout from '../components/AppLayouts';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../components/Element/Modal';
 import SelectInput from '../components/Element/selectInput';
 import InputText from '../components/Element/InputText';
