@@ -3,7 +3,11 @@ import { authenticate, getUsers, register } from '../controllers/UserController.
 import { addTransaction, budgetTransactions, deleteTransaction, getTransaction, updateTransaction } from '../controllers/TransactionController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import authorize from '../middleware/authorize.js';
+<<<<<<< HEAD
 import { addBudget, deleteBudget, getBudget, updateBudget } from '../controllers/BudgetController.js';
+=======
+import { addBudget, getBudget } from '../controllers/BudgetController.js';
+>>>>>>> 303131d781e43efaf4c5527141fa5f8ff08865f5
 
 const router = express.Router();
 
