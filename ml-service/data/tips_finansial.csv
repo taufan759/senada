@@ -1,0 +1,126 @@
+content_id,title,category,topic,target_behavior
+1,Cara Membuat Anggaran Bulanan yang Efektif,basic_budgeting,budgeting,budget_planning
+2,50/30/20 Rule: Atur Keuangan dengan Mudah,basic_budgeting,budgeting,budget_planning
+3,Track Pengeluaran Harian Anda,basic_budgeting,expense_tracking,reduce_expenses
+4,Mengenal Kebutuhan vs Keinginan,basic_budgeting,financial_literacy,optimize_spending
+5,Tips Mencatat Keuangan untuk Pemula,basic_budgeting,expense_tracking,budget_planning
+6,10 Cara Hemat Belanja Bulanan,expense_reduction,shopping,reduce_expenses
+7,Hemat Listrik dengan Cara Sederhana,expense_reduction,utilities,reduce_expenses
+8,Meal Prep: Hemat Uang Makan,expense_reduction,food,reduce_expenses
+9,Bandingkan Harga Sebelum Membeli,expense_reduction,shopping,optimize_spending
+10,Kurangi Langganan yang Tidak Perlu,expense_reduction,subscriptions,reduce_expenses
+11,Mulai Menabung dengan Rp 10.000,savings_tips,saving,start_saving
+12,Automatic Saving: Set and Forget,savings_tips,saving,increase_savings
+13,Challenge Menabung 52 Minggu,savings_tips,saving,increase_savings
+14,Tips Menabung untuk Anak Muda,savings_tips,saving,start_saving
+15,Cara Menabung 30% dari Gaji,savings_tips,saving,increase_savings
+16,Pentingnya Dana Darurat,emergency_fund,emergency,start_saving
+17,Berapa Besar Dana Darurat Ideal?,emergency_fund,emergency,increase_savings
+18,Cara Membangun Dana Darurat,emergency_fund,emergency,start_saving
+19,Kapan Menggunakan Dana Darurat?,emergency_fund,emergency,manage_risk
+20,Dana Darurat vs Tabungan Biasa,emergency_fund,emergency,financial_planning
+21,Strategi Melunasi Utang Kartu Kredit,debt_management,credit_card,manage_debt
+22,Debt Snowball vs Debt Avalanche,debt_management,debt_strategy,manage_debt
+23,Cara Negosiasi Bunga Pinjaman,debt_management,loans,manage_debt
+24,Hindari Jebakan Pinjaman Online,debt_management,online_loans,manage_risk
+25,Konsolidasi Utang: Pro dan Kontra,debt_management,debt_strategy,manage_debt
+26,Investasi untuk Pemula,investment,investing,invest_wisely
+27,Mengenal Risiko Investasi,investment,risk,manage_risk
+28,Reksadana vs Saham: Mana yang Cocok?,investment,instruments,invest_wisely
+29,Dollar Cost Averaging Explained,investment,strategy,invest_wisely
+30,Diversifikasi Portfolio Investasi,investment,strategy,manage_risk
+31,Keamanan Transaksi Online,digital_finance,security,online_safety
+32,E-Wallet: Tips Penggunaan Aman,digital_finance,e_wallet,online_safety
+33,Waspada Penipuan Online,digital_finance,fraud,online_safety
+34,Manfaatkan Promo Digital Wisely,digital_finance,promotions,optimize_spending
+35,Digital Banking untuk Millennials,digital_finance,banking,financial_planning
+36,Rencana Keuangan untuk Menikah,financial_planning,life_events,financial_planning
+37,Persiapan Dana Pendidikan Anak,financial_planning,education,long_term_planning
+38,Kapan Waktu Tepat Beli Rumah?,financial_planning,property,long_term_planning
+39,Retirement Planning di Usia 30,financial_planning,retirement,long_term_planning
+40,Asuransi: Proteksi atau Investasi?,financial_planning,insurance,manage_risk
+41,Cara Membuat Anggaran Bulanan yang Efektif - Part 2,basic_budgeting,budgeting,budget_planning
+42,50/30/20 Rule: Atur Keuangan dengan Mudah - Part 2,basic_budgeting,budgeting,budget_planning
+43,Track Pengeluaran Harian Anda - Part 2,basic_budgeting,expense_tracking,reduce_expenses
+44,Mengenal Kebutuhan vs Keinginan - Part 2,basic_budgeting,financial_literacy,optimize_spending
+45,Tips Mencatat Keuangan untuk Pemula - Part 2,basic_budgeting,expense_tracking,budget_planning
+46,10 Cara Hemat Belanja Bulanan - Part 2,expense_reduction,shopping,reduce_expenses
+47,Hemat Listrik dengan Cara Sederhana - Part 2,expense_reduction,utilities,reduce_expenses
+48,Meal Prep: Hemat Uang Makan - Part 2,expense_reduction,food,reduce_expenses
+49,Bandingkan Harga Sebelum Membeli - Part 2,expense_reduction,shopping,optimize_spending
+50,Kurangi Langganan yang Tidak Perlu - Part 2,expense_reduction,subscriptions,reduce_expenses
+51,Mulai Menabung dengan Rp 10.000 - Part 2,savings_tips,saving,start_saving
+52,Automatic Saving: Set and Forget - Part 2,savings_tips,saving,increase_savings
+53,Challenge Menabung 52 Minggu - Part 2,savings_tips,saving,increase_savings
+54,Tips Menabung untuk Anak Muda - Part 2,savings_tips,saving,start_saving
+55,Cara Menabung 30% dari Gaji - Part 2,savings_tips,saving,increase_savings
+56,Pentingnya Dana Darurat - Part 2,emergency_fund,emergency,start_saving
+57,Berapa Besar Dana Darurat Ideal? - Part 2,emergency_fund,emergency,increase_savings
+58,Cara Membangun Dana Darurat - Part 2,emergency_fund,emergency,start_saving
+59,Kapan Menggunakan Dana Darurat? - Part 2,emergency_fund,emergency,manage_risk
+60,Dana Darurat vs Tabungan Biasa - Part 2,emergency_fund,emergency,financial_planning
+61,Strategi Melunasi Utang Kartu Kredit - Part 2,debt_management,credit_card,manage_debt
+62,Debt Snowball vs Debt Avalanche - Part 2,debt_management,debt_strategy,manage_debt
+63,Cara Negosiasi Bunga Pinjaman - Part 2,debt_management,loans,manage_debt
+64,Hindari Jebakan Pinjaman Online - Part 2,debt_management,online_loans,manage_risk
+65,Konsolidasi Utang: Pro dan Kontra - Part 2,debt_management,debt_strategy,manage_debt
+66,Investasi untuk Pemula - Part 2,investment,investing,invest_wisely
+67,Mengenal Risiko Investasi - Part 2,investment,risk,manage_risk
+68,Reksadana vs Saham: Mana yang Cocok? - Part 2,investment,instruments,invest_wisely
+69,Dollar Cost Averaging Explained - Part 2,investment,strategy,invest_wisely
+70,Diversifikasi Portfolio Investasi - Part 2,investment,strategy,manage_risk
+71,Keamanan Transaksi Online - Part 2,digital_finance,security,online_safety
+72,E-Wallet: Tips Penggunaan Aman - Part 2,digital_finance,e_wallet,online_safety
+73,Waspada Penipuan Online - Part 2,digital_finance,fraud,online_safety
+74,Manfaatkan Promo Digital Wisely - Part 2,digital_finance,promotions,optimize_spending
+75,Digital Banking untuk Millennials - Part 2,digital_finance,banking,financial_planning
+76,Rencana Keuangan untuk Menikah - Part 2,financial_planning,life_events,financial_planning
+77,Persiapan Dana Pendidikan Anak - Part 2,financial_planning,education,long_term_planning
+78,Kapan Waktu Tepat Beli Rumah? - Part 2,financial_planning,property,long_term_planning
+79,Retirement Planning di Usia 30 - Part 2,financial_planning,retirement,long_term_planning
+80,Asuransi: Proteksi atau Investasi? - Part 2,financial_planning,insurance,manage_risk
+81,Cara Membuat Anggaran Bulanan yang Efektif - Part 3,basic_budgeting,budgeting,budget_planning
+82,50/30/20 Rule: Atur Keuangan dengan Mudah - Part 3,basic_budgeting,budgeting,budget_planning
+83,Track Pengeluaran Harian Anda - Part 3,basic_budgeting,expense_tracking,reduce_expenses
+84,Mengenal Kebutuhan vs Keinginan - Part 3,basic_budgeting,financial_literacy,optimize_spending
+85,Tips Mencatat Keuangan untuk Pemula - Part 3,basic_budgeting,expense_tracking,budget_planning
+86,10 Cara Hemat Belanja Bulanan - Part 3,expense_reduction,shopping,reduce_expenses
+87,Hemat Listrik dengan Cara Sederhana - Part 3,expense_reduction,utilities,reduce_expenses
+88,Meal Prep: Hemat Uang Makan - Part 3,expense_reduction,food,reduce_expenses
+89,Bandingkan Harga Sebelum Membeli - Part 3,expense_reduction,shopping,optimize_spending
+90,Kurangi Langganan yang Tidak Perlu - Part 3,expense_reduction,subscriptions,reduce_expenses
+91,Mulai Menabung dengan Rp 10.000 - Part 3,savings_tips,saving,start_saving
+92,Automatic Saving: Set and Forget - Part 3,savings_tips,saving,increase_savings
+93,Challenge Menabung 52 Minggu - Part 3,savings_tips,saving,increase_savings
+94,Tips Menabung untuk Anak Muda - Part 3,savings_tips,saving,start_saving
+95,Cara Menabung 30% dari Gaji - Part 3,savings_tips,saving,increase_savings
+96,Pentingnya Dana Darurat - Part 3,emergency_fund,emergency,start_saving
+97,Berapa Besar Dana Darurat Ideal? - Part 3,emergency_fund,emergency,increase_savings
+98,Cara Membangun Dana Darurat - Part 3,emergency_fund,emergency,start_saving
+99,Kapan Menggunakan Dana Darurat? - Part 3,emergency_fund,emergency,manage_risk
+100,Dana Darurat vs Tabungan Biasa - Part 3,emergency_fund,emergency,financial_planning
+101,Strategi Melunasi Utang Kartu Kredit - Part 3,debt_management,credit_card,manage_debt
+102,Debt Snowball vs Debt Avalanche - Part 3,debt_management,debt_strategy,manage_debt
+103,Cara Negosiasi Bunga Pinjaman - Part 3,debt_management,loans,manage_debt
+104,Hindari Jebakan Pinjaman Online - Part 3,debt_management,online_loans,manage_risk
+105,Konsolidasi Utang: Pro dan Kontra - Part 3,debt_management,debt_strategy,manage_debt
+106,Investasi untuk Pemula - Part 3,investment,investing,invest_wisely
+107,Mengenal Risiko Investasi - Part 3,investment,risk,manage_risk
+108,Reksadana vs Saham: Mana yang Cocok? - Part 3,investment,instruments,invest_wisely
+109,Dollar Cost Averaging Explained - Part 3,investment,strategy,invest_wisely
+110,Diversifikasi Portfolio Investasi - Part 3,investment,strategy,manage_risk
+111,Keamanan Transaksi Online - Part 3,digital_finance,security,online_safety
+112,E-Wallet: Tips Penggunaan Aman - Part 3,digital_finance,e_wallet,online_safety
+113,Waspada Penipuan Online - Part 3,digital_finance,fraud,online_safety
+114,Manfaatkan Promo Digital Wisely - Part 3,digital_finance,promotions,optimize_spending
+115,Digital Banking untuk Millennials - Part 3,digital_finance,banking,financial_planning
+116,Rencana Keuangan untuk Menikah - Part 3,financial_planning,life_events,financial_planning
+117,Persiapan Dana Pendidikan Anak - Part 3,financial_planning,education,long_term_planning
+118,Kapan Waktu Tepat Beli Rumah? - Part 3,financial_planning,property,long_term_planning
+119,Retirement Planning di Usia 30 - Part 3,financial_planning,retirement,long_term_planning
+120,Asuransi: Proteksi atau Investasi? - Part 3,financial_planning,insurance,manage_risk
+121,Cara Membuat Anggaran Bulanan yang Efektif - Part 4,basic_budgeting,budgeting,budget_planning
+122,50/30/20 Rule: Atur Keuangan dengan Mudah - Part 4,basic_budgeting,budgeting,budget_planning
+123,Track Pengeluaran Harian Anda - Part 4,basic_budgeting,expense_tracking,reduce_expenses
+124,Mengenal Kebutuhan vs Keinginan - Part 4,basic_budgeting,financial_literacy,optimize_spending
+125,Tips Mencatat Keuangan untuk Pemula - Part 4,basic_budgeting,expense_tracking,budget_planning

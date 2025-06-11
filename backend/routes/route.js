@@ -1,6 +1,7 @@
 import express from 'express';
 import { authenticate, getUsers, register } from '../controllers/UserController.js';
 import { addTransaction, deleteTransaction, getTransaction, updateTransaction } from '../controllers/TransactionController.js';
+import { predictCashflow, checkMLServiceHealth } from '../controllers/MLController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import authorize from '../middleware/authorize.js';
 
@@ -19,5 +20,11 @@ router.delete('/transactions/delete/:transactionId', deleteTransaction);
 
 router.post('/authenticate', authenticate);
 router.post('/register', register);
+
+// ML routes (protected)
+router.get('/ml/health', checkMLServiceHealth);
+router.post('/ml/predict', verifyToken, authorize('user', 'admin'), predictCashflow);
+router.post('/ml/tips', verifyToken, authorize('user', 'admin'), getFinancialTips);
+
 
 export default router;

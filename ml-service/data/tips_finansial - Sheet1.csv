@@ -1,0 +1,126 @@
+content_id,title,category,topic,target_behavior
+1,Cara Mengelola Pengeluaran Harian,budgeting,pengeluaran,spender
+2,Panduan Menabung Otomatis di Rekening Khusus,saving,tabungan,"saver, balanced"
+3,Investasi Dasar untuk Pemula,investing,investasi,"saver, balanced"
+4,Cara Menghindari Impulse Buying,mindset,konsumsi bijak,spender
+5,Mengenal Aturan 50/30/20,budgeting,alokasi keuangan,"spender, saver, balanced"
+6,Membuat Dana Darurat,saving,darurat,saver
+7,Tips Hemat Belanja Bulanan,budgeting,pengeluaran rumah tangga,spender
+8,Cara Membuat Budget Bulanan,budgeting,perencanaan,balanced
+9,Pentingnya Catatan Keuangan Pribadi,habit,tracking,"spender, balanced"
+10,Langkah Awal Investasi Reksadana,investing,reksadana,saver
+11,Tips Menentukan Prioritas Keuangan,mindset,prioritas,"spender, balanced"
+12,Cara Menyusun Tujuan Finansial Jangka Panjang,planning,tujuan keuangan,balanced
+13,Menabung Gaya Mahasiswa,saving,tips mahasiswa,spender
+14,Membedakan Kebutuhan vs Keinginan,mindset,konsumsi,spender
+15,Tips Hindari Cicilan yang Mengganggu Cashflow,debt,hutang,spender
+16,Panduan Investasi Saham Pemula,investing,saham,saver
+17,Cara Mengatur Keuangan Freelance,budgeting,freelancer,balanced
+18,Menabung dengan Target Harian,saving,habit saving,spender
+19,Gunakan Aplikasi Pencatatan Keuangan,tool,tracking,"spender, balanced"
+20,Cara Cerdas Mengelola THR,seasonal,uang musiman,spender
+21,Strategi Kelola Uang Saat Gajian,budgeting,awal bulan,"spender, balanced"
+22,Tips Liburan Tanpa Boros,lifestyle,pengeluaran hiburan,spender
+23,Mulai Investasi dari Uang Nongkrong,investing,kebiasaan,"spender, balanced"
+24,Tips Finansial untuk Pasangan Muda,relationship,keuangan pasangan,balanced
+25,Mengenal Risiko dalam Investasi,investing,manajemen risiko,saver
+26,Strategi Atur Uang untuk Pelajar,budgeting,pelajar,spender
+27,Mengatur Keuangan dengan Envelope System,method,alokasi manual,balanced
+28,Checklist Keuangan di Awal Tahun,planning,resolusi,"saver, balanced"
+29,Tips Beli Gadget Tanpa Merusak Keuangan,lifestyle,pengeluaran besar,spender
+30,Perencanaan Pensiun Sejak Dini,planning,pensiun,saver
+31,Mulai Menabung dengan Metode 50/30/20,budgeting,alokasi keuangan,"spender, balanced"
+32,Cara Efektif Mengurangi Pengeluaran Impulsif,mindset,pengendalian diri,spender
+33,Membuat Anggaran Bulanan yang Realistis,planning,perencanaan keuangan,balanced
+34,Pentingnya Dana Darurat dan Cara Membangunnya,saving,dana darurat,"saver, balanced"
+35,Investasi untuk Pemula: Langkah Awal,investing,investasi dasar,saver
+36,Mengelola Keuangan di Awal Karier,budgeting,pengelolaan awal karier,"spender, balanced"
+37,Strategi Menabung untuk Liburan Impian,saving,tabungan tujuan,spender
+38,Tips Menghindari Utang Konsumtif,debt,manajemen utang,spender
+39,Mengenal Produk Investasi yang Sesuai,investing,pemilihan investasi,"saver, balanced"
+40,Cara Menyusun Tujuan Keuangan Jangka Panjang,planning,tujuan finansial,balanced
+41,Menabung Otomatis: Solusi Praktis,saving,otomatisasi tabungan,saver
+42,Mengatur Keuangan Keluarga dengan Bijak,budgeting,keuangan keluarga,balanced
+43,Menggunakan Aplikasi Keuangan untuk Tracking,tool,teknologi keuangan,"spender, balanced"
+44,Cara Cerdas Menggunakan Kartu Kredit,debt,penggunaan kredit,spender
+45,Menabung untuk Pendidikan Anak,saving,pendidikan,"saver, balanced"
+46,Strategi Investasi di Usia Muda,investing,investasi pemula,saver
+47,Mengelola Keuangan Saat Krisis Ekonomi,planning,manajemen krisis,balanced
+48,Tips Menghindari Penipuan Keuangan,security,keamanan finansial,"spender, saver, balanced"
+49,Membuat Catatan Keuangan Harian,habit,tracking,"spender, balanced"
+50,Cara Menentukan Prioritas Pengeluaran,mindset,prioritas keuangan,"spender, balanced"
+51,Mengelola Bonus dan Pendapatan Tambahan,budgeting,penghasilan tambahan,"spender, balanced"
+52,Tips Berhemat Tanpa Mengorbankan Kualitas Hidup,lifestyle,gaya hidup hemat,spender
+53,Mengenal Risiko dan Imbal Hasil Investasi,investing,manajemen risiko,"saver, balanced"
+54,Strategi Menabung untuk Dana Pernikahan,saving,pernikahan,"saver, balanced"
+55,Mengelola Keuangan Saat Memulai Bisnis,budgeting,wirausaha,balanced
+56,Tips Mengatur Keuangan bagi Freelancer,budgeting,pekerja lepas,"spender, balanced"
+57,Cara Efektif Membayar Utang,debt,pelunasan utang,spender
+58,Mengelola Keuangan Saat Pindah Rumah,planning,transisi hidup,balanced
+59,Cara Menyiapkan Dana Menikah,planning,dana pernikahan,balanced
+60,Panduan Nabung Uang Receh Harian,saving,tabungan receh,spender
+61,Tips Hindari Langganan Berulang Tak Terpakai,budgeting,pengeluaran langganan,spender
+62,Investasi Emas untuk Pemula,investing,investasi emas,saver
+63,Tips Membeli Rumah Pertama,planning,properti,balanced
+64,Mengatur Uang Saat Baru Lulus Kuliah,budgeting,lulusan baru,balanced
+65,Mengenal Investasi Obligasi,investing,obligasi,saver
+66,Tips Belanja Cerdas di E-commerce,budgeting,belanja online,spender
+67,Cara Menyusun Tujuan Keuangan Tahunan,planning,perencanaan keuangan,balanced
+68,Mengenal Asuransi Kesehatan,protection,asuransi kesehatan,saver
+69,Tips Memilih Aplikasi E-wallet,tool,dompet digital,spender
+70,Cara Menyusun Anggaran Keuangan untuk Kos,budgeting,anak kos,balanced
+71,Mengenal Crypto: Risiko dan Peluang,investing,cryptocurrency,spender
+72,Membedakan Investasi Legal vs Bodong,awareness,literasi investasi,balanced
+73,Tips Mengatur Uang Jajan Mahasiswa,budgeting,uang jajan,spender
+74,Cara Menabung untuk Dana Pendidikan,saving,pendidikan,saver
+75,Langkah Awal Memulai Side Hustle,earning,tambahan penghasilan,spender
+76,Mengenal SBN (Surat Berharga Negara),investing,surat berharga negara,saver
+77,Tips Menjaga Cash Flow Saat Magang,budgeting,keuangan magang,balanced
+78,Cara Mengatur Keuangan Saat Long Weekend,budgeting,liburan panjang,spender
+79,Strategi Menghindari SCAM Finansial Online,awareness,keamanan keuangan,balanced
+80,Investasi ETF: Apa dan Bagaimana,investing,ETF,saver
+81,Rekomendasi Buku Literasi Keuangan untuk Pemula,learning,buku keuangan,balanced
+82,Tips Belanja di Akhir Bulan,budgeting,akhir bulan,spender
+83,Cara Hitung Bunga Pinjaman dengan Mudah,debt,bunga pinjaman,spender
+84,Tips Finansial Buat yang Hobi Nongkrong,budgeting,gaya hidup,spender
+85,Menentukan Target Investasi Sesuai Usia,planning,tujuan investasi,saver
+86,Cara Mengatur Keuangan Saat Jadi Relawan,budgeting,volunteer,balanced
+87,Tips Menabung untuk Beli Kendaraan,saving,kendaraan pribadi,balanced
+88,Menyiapkan Dana Untuk Upgrade Skill,saving,pengembangan diri,saver
+89,Memahami Pentingnya Dana Darurat,saving,dana darurat,balanced
+90,Strategi Investasi untuk Pemula,investing,investasi,saver
+91,Cara Menghindari Pengeluaran Impulsif,budgeting,pengeluaran,spender
+92,Mengenal Skor Kredit dan Cara Meningkatkannya,credit,skor kredit,balanced
+93,Tips Menabung untuk Liburan Impian,saving,tabungan,spender
+94,Investasi Jangka Panjang: Apa yang Perlu Diketahui,investing,investasi jangka panjang,saver
+95,Mengelola Keuangan Saat Kuliah,budgeting,mahasiswa,balanced
+96,Strategi Menabung ala Fire Movement,Menabung,Perencanaan Keuangan,Saver
+97,Tips Menabung di Tengah Biaya Hidup yang Tinggi,Menabung,Manajemen Pengeluaran,Saver
+98,Tips Menabung dengan Metode Gamifikasi,Menabung,Gaya Hidup Hemat,Saver
+99,Cara Menentukan Biaya Hidup Minimal,Pengeluaran,Keuangan Pribadi,Saver
+100,Cara Menentukan Tujuan Keuangan SMART,Perencanaan,Literasi Keuangan,Saver
+101,Panduan Memilih Reksa Dana untuk Mahasiswa,Investasi,Edukasi Investasi,Saver
+102,Strategi Menabung untuk Beli Rumah,Menabung,Tujuan Finansial,Saver
+103,Tips Mengatur Budget Makan di Luar,Budgeting,Gaya Hidup Hemat,Saver
+104,Cara Menyusun Cashflow Bulanan Positif,Pengelolaan Uang,Cashflow,Saver
+105,Tips Menjaga Keseimbangan Finansial dan Mental,Mindset,Kesehatan Finansial,Saver
+106,Tips Menghindari Investasi Berkedok MLM,Perlindungan,Anti-Fraud,Saver
+107,Tips Mengelola Gaji Pertama dengan Bijak,Penghasilan,Edukasi Finansial,Saver
+108,"Cara Menghindari Mental ""Payday Syndrome""",Psikologi Uang,Gaya Hidup Hemat,Saver
+109,Cara Membuat Financial Vision Board,Tujuan Finansial,Visualisasi Keuangan,Saver
+110,Pentingnya Diversifikasi Portofolio Investasi,Investasi,Manajemen Risiko,Balanced
+111,Cara Membaca Laporan Keuangan Pribadi,Edukasi Finansial,Literasi Keuangan,Balanced
+112,Cara Menentukan Nilai Kekayaan Bersih (Net Worth),Keuangan Pribadi,Aset & Liabilitas,Balanced
+113,Pentingnya Review Keuangan Bulanan,Monitoring,Evaluasi Finansial,Balanced
+114,Mengenal Perilaku Keuangan dan Dampaknya,Psikologi Uang,Edukasi Finansial,Balanced
+115,Tips Finansial untuk Digital Creator,Penghasilan,Freelance & Creator,Balanced
+116,Langkah Mengatur Uang Hasil Side Hustle,Penghasilan,Side Hustle,Balanced
+117,Panduan Mengelola Cashback & Reward Points,Manfaat Tambahan,Strategi Keuangan,Balanced
+118,Cara Menyusun Tujuan Keuangan SMART,Tujuan Finansial,Perencanaan,Balanced
+119,Cara Mengatur Keuangan saat Menjadi Digital Nomad,Karier,Gaya Hidup Fleksibel,Balanced
+120,Tips Mengatur Uang Saat LDR atau Pasangan Jarak Jauh,Relasi,Keuangan Pasangan,Balanced
+121,Cara Menentukan Target Investasi Realistis,Investasi,Perencanaan Keuangan,Balanced
+122,Tips Membeli Barang Mahal dengan Perencanaan,Pengeluaran,Konsumsi Terencana,Spender
+123,Strategi Menentukan Asuransi yang Tepat,Proteksi,Asuransi,Spender
+124,Mengenal Perbedaan Tabungan dan Deposito,Edukasi Dasar,Produk Perbankan,Spender
+125,Mengenal Perbedaan Kredit dan Leasing,Edukasi Dasar,Pembiayaan,Spender

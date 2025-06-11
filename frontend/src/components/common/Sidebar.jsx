@@ -16,6 +16,13 @@ const Sidebar = () => {
     { title: 'Dashboard', path: '/dashboard', icon: '🏠', gradient: 'from-blue-500 to-cyan-400' },
     { title: 'Transaksi', path: '/transactions', icon: '💰', gradient: 'from-green-500 to-emerald-400' },
     { title: 'Anggaran', path: '/budget', icon: '📊', gradient: 'from-purple-500 to-pink-400' },
+    { 
+      title: 'AI Insights', 
+      path: '/ml-insights', 
+      icon: '🤖', 
+      gradient: 'from-yellow-500 to-orange-400',
+      isNew: true // Badge untuk fitur baru
+    },
     { title: 'Tujuan', path: '/goals', icon: '🎯', gradient: 'from-orange-500 to-red-400' },
     { title: 'Investasi', path: '/investment', icon: '📈', gradient: 'from-indigo-500 to-purple-400' },
     { title: 'Laporan', path: '/reports', icon: '📋', gradient: 'from-teal-500 to-cyan-400' },
@@ -109,6 +116,13 @@ const Sidebar = () => {
                   <span className="font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
                     {item.title}
                   </span>
+                  
+                  {/* New Badge */}
+                  {item.isNew && (
+                    <span className="ml-auto bg-gradient-to-r from-yellow-400 to-orange-400 text-xs px-2 py-1 rounded-full text-blue-900 font-bold animate-pulse">
+                      NEW
+                    </span>
+                  )}
                   
                   {/* Active indicator */}
                   {isActive(item.path) && (
