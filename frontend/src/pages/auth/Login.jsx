@@ -47,7 +47,7 @@ const Login = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-cyan-500/10"></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl"></div>
-      
+
       <div className="w-full max-w-md mx-4 relative z-10">
         {/* Header Card */}
         <div className="text-center mb-8">
@@ -139,8 +139,8 @@ const Login = () => {
           <div className="text-center mt-8 pt-6 border-t border-white/10">
             <p className="text-blue-200">
               Belum punya akun?{' '}
-              <Link 
-                to="/register" 
+              <Link
+                to="/register"
                 className="text-blue-300 hover:text-blue-200 font-semibold transition-colors duration-300"
               >
                 Daftar gratis di sini 🎉

@@ -5,6 +5,7 @@ import SelectInput from '../components/Element/selectInput';
 import InputNumber from '../components/Element/InputNumber';
 import CardOption from '../components/Element/CardOption';
 import InputRadio from '../components/Element/InputRadio';
+import AppSettings from '../AppSettings';
 
 const Investment = () => {
   const [riskProfile, setRiskProfile] = useState(false);
@@ -13,6 +14,7 @@ const Investment = () => {
 
   const [tujuan, setTujuan] = useState('');
   const [usia, setUsia] = useState('');
+  const [pendapatan, setPendapatan] = useState('');
   const [targetDana, setTargetDana] = useState('');
   const [jangkaWaktu, setJangkaWaktu] = useState('');
   const [pemahaman, setPemahaman] = useState('');
@@ -52,20 +54,56 @@ const Investment = () => {
     // console.log('Layer Quiz berubah:', layerQuiz);
   }, [layerQuiz]);
 
-  const handleCompleteQuiz = (e) => {
+  const handleCompleteQuiz = async (e) => {
     e.preventDefault();
 
-    console.log('Tujuan:', tujuan);
-    console.log('Usia:', usia);
-    console.log('Target Dana:', targetDana);
-    console.log('Jangka Waktu:', jangkaWaktu);
-    console.log('Pemahaman:', pemahaman);
-    console.log('Behavior:', behavior);
-    console.log('Priority:', priority);
-    console.log('Jenis Investasi:', jenisInvestasi);
+    let profileResiko = parseInt(behavior) + parseInt(priority) + parseInt(jenisInvestasi);
+
+    if (profileResiko >= 3 && profileResiko <= 5) {
+      profileResiko = 'Konservatif';
+    } else if (profileResiko >= 6 && profileResiko <= 10) {
+      profileResiko = 'Moderat';
+
+    } else if (profileResiko >= 11 && profileResiko <= 15) {
+      profileResiko = 'Agresif';
+    }
+
+    try {
+      const response = await fetch(`${AppSettings.api}/recommend`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          usia: usia,
+          profil_risiko: profileResiko,
+          pendapatan_bulanan_juta: pendapatan,
+          tingkat_pengetahuan: pemahaman,
+          tujuan_keuangan: tujuan,
+          target_dana_juta: targetDana,
+          jangka_waktu_thn: jangkaWaktu
+        })
+      });
+
+      const data = await response.json();
+      console.log('Full response:', data);
+      console.log('Rekomendasi:', data.rekomendasi);
+
+      // Akses data rekomendasi
+      data.rekomendasi.forEach((r, index) => {
+        console.log(`Rekomendasi ${index + 1}:`, r);
+      });
+
+      // Simpan ke state atau lakukan sesuatu dengan data
+      // setRecommendations(data.rekomendasi); // jika pakai useState
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
 
     // setRiskProfile(false);
     // setShowQuiz(false);
+    // window.location.reload();
   };
   return (
     <AppLayout>
@@ -183,8 +221,8 @@ const Investment = () => {
                     return (
                       <>
                         <div className="flex flex-col gap-2">
-                          <label htmlFor="usia" className="text-sm text-gray-600 mb-1">Berapa kira-kira dana yang kamu butuhkan?</label>
-                          <InputNumber name="usia" value={targetDana} onChange={(e) => setTargetDana(e.target.value)} />
+                          <label htmlFor="targetDana" className="text-sm text-gray-600 mb-1">Berapa kira-kira dana yang kamu butuhkan? (dalam juta. Contoh: 100)</label>
+                          <InputNumber name="targetDana" value={targetDana} onChange={(e) => setTargetDana(e.target.value)} />
                         </div>
                         <div className="flex flex-col gap-2">
                           <label htmlFor="tujuan" className="text-sm text-gray-600 mb-1">Kapan kamu ingin tujuan ini tercapai?</label>
@@ -196,10 +234,10 @@ const Investment = () => {
                             placeholder="Pilih Tujuan"
                             className="border border-gray-300 rounded-md p-2"
                           >
-                            <option value="kurang-5jt">&lt; 1 Tahun</option>
-                            <option value="5jt-10jt">1 Tahun - 3 Tahun</option>
-                            <option value="10jt-20jt">3 Tahun - 5 Tahun</option>
-                            <option value="lebih-20jt">&gt; 5 Tahun</option>
+                            <option value="1">&lt; 1 Tahun</option>
+                            <option value="2">1 Tahun - 3 Tahun</option>
+                            <option value="4">3 Tahun - 5 Tahun</option>
+                            <option value="5">&gt; 5 Tahun</option>
                           </SelectInput>
                         </div>
                         <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(1) }}>
@@ -218,19 +256,19 @@ const Investment = () => {
                           <InputNumber name="usia" value={usia} onChange={(e) => setUsia(e.target.value)} />
                         </div>
                         <div className="flex flex-col gap-2">
-                          <label htmlFor="tujuan" className="text-sm text-gray-600 mb-1">Berapa kira-kira total pendapatan bulananmu?</label>
+                          <label htmlFor="pendapatan" className="text-sm text-gray-600 mb-1">Berapa kira-kira total pendapatan bulananmu?</label>
                           <SelectInput
-                            name="tujuan"
+                            name="pendapatan"
                             options={['Pengembangan Karir', 'Pembelian Rumah', 'Pendidikan Anak', 'Pensiun', 'Pengembangan Usaha']}
-                            onChange={(e) => setTujuan(e.target.value)}
-                            value={tujuan}
-                            placeholder="Pilih Tujuan"
+                            onChange={(e) => setPendapatan(e.target.value)}
+                            value={pendapatan}
+                            placeholder="Silahkan pilih"
                             className="border border-gray-300 rounded-md p-2"
                           >
-                            <option value="kurang-5jt">&lt; Rp 5.000.000</option>
-                            <option value="5jt-10jt">Rp 5.000.000 - Rp 10.000.000</option>
-                            <option value="10jt-20jt">Rp 10.000.000 - Rp 20.000.000</option>
-                            <option value="lebih-20jt">&gt; Rp 20.000.000</option>
+                            <option value="5">&lt; Rp 5.000.000</option>
+                            <option value="7.5">Rp 5.000.000 - Rp 10.000.000</option>
+                            <option value="15">Rp 10.000.000 - Rp 20.000.000</option>
+                            <option value="20">&gt; Rp 20.000.000</option>
                           </SelectInput>
                         </div>
                         <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(2) }}>
@@ -277,7 +315,7 @@ const Investment = () => {
                               id="behavior-1"
                               name="behavior"
                               label="Panik! Saya akan jual sebagian besar agar tidak rugi lebih banyak"
-                              value="Panik"
+                              value="1"
                               onChange={(e) => setBehavior(e.target.value)} />
 
 
@@ -285,14 +323,14 @@ const Investment = () => {
                               id="behavior-2"
                               name="behavior"
                               label="Khawatir, tapi saya akan diamkan dan tunggu sampai pulih"
-                              value="Khawatir"
+                              value="3"
                               onChange={(e) => setBehavior(e.target.value)} />
 
                             <InputRadio
                               id="behavior-3"
                               name="behavior"
                               label="Tenang. Justru ini kesempatan untuk beli lagi di harga murah"
-                              value="Tenang"
+                              value="5"
                               onChange={(e) => setBehavior(e.target.value)} />
                           </div>
                         </div>
@@ -314,14 +352,14 @@ const Investment = () => {
                               id="priority-1"
                               name="priority"
                               label="Pokoknya uangku aman, untung sedikit tidak apa-apa"
-                              value="Keamanan Modal"
+                              value="1"
                               onChange={(e) => setPriority(e.target.value)} />
 
                             <InputRadio
                               id="priority-2"
                               name="priority"
                               label="Siap terima risiko tinggi untuk untung besar"
-                              value="Potensi Keuntungan Maksimal"
+                              value="5"
                               onChange={(e) => setPriority(e.target.value)} />
                           </div>
                         </div>
@@ -333,21 +371,21 @@ const Investment = () => {
                               id="jenisInvestasi-3"
                               name="jenisInvestasi"
                               label="Deposito atau Emas"
-                              value="Deposito atau Emas"
+                              value="1"
                               onChange={(e) => setJenisInvestasi(e.target.value)} />
 
                             <InputRadio
                               id="jenisInvestasi-2"
                               name="jenisInvestasi"
                               label="Reksa Dana"
-                              value="Reksa Dana"
+                              value="3"
                               onChange={(e) => setJenisInvestasi(e.target.value)} />
 
                             <InputRadio
                               id="jenisInvestasi-3"
                               name="jenisInvestasi"
                               label="Saham"
-                              value="Saham"
+                              value="5"
                               onChange={(e) => setJenisInvestasi(e.target.value)} />
                           </div>
                         </div>
@@ -368,9 +406,6 @@ const Investment = () => {
               })()}
 
             </form>
-            {/* <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={handleCompleteQuiz}>
-              Lanjutkan
-            </button> */}
           </div>
         )
         }

@@ -26,6 +26,24 @@ router.delete('/budget/delete/:budgetId', deleteBudget);
 router.put('/budget/update/:budgetId', updateBudget);
 router.get('/budget/transactions', budgetTransactions);
 
+router.post('/recommend', async (req, res) => {
+  try {
+    const response = await fetch('http://localhost:5000/recommend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body)
+    });
+
+    const data = await response.json();
+    res.json(data);
+    return data;
+  } catch (error) {
+    res.status(500).json({ error: 'ML Service Error' });
+  }
+});
+
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 
