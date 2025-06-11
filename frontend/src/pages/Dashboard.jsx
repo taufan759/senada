@@ -11,6 +11,7 @@ import AppLayout from '../components/AppLayouts';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
+  /////////////////////       STATE VARIABLES       /////////////////////
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
@@ -21,10 +22,14 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
 
   const [addOpen, setAddOpen] = useState(false)
+
+
   // menjalankan fungsi saat komponen pertama kali dimuat
   useEffect(() => {
     getTransactions();
   }, []);
+
+  /////////////////////       HANDLE FUNCTIONS       /////////////////////
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,6 +60,8 @@ const Dashboard = () => {
     }
   }
 
+  /////////////////////       API CALL FUNCTIONS       /////////////////////
+
   // mengambil data transaksi dari database
   const getTransactions = async () => {
     try {
@@ -84,6 +91,8 @@ const Dashboard = () => {
       console.error(error);
     }
   };
+
+  /////////////////////       UTILITIES FUNCTIONS       /////////////////////
 
   // Generate monthly data dari data transactions untuk menampilkan grafik
   // dengan format { month: 'Jan', income: 0, expense: 0 }
@@ -143,6 +152,7 @@ const Dashboard = () => {
   // membuat format data kategori untuk chart
   const categoryData = Object.entries(categoryTotals).map(([name, amount], idx) => ({
     name,
+    amount,
     percentage: totalExpense ? Math.round((amount / totalExpense) * 100) : 0,
     color: categoryColors[idx % categoryColors.length],
   }));
@@ -398,7 +408,7 @@ const Dashboard = () => {
             {categoryData.map((category, index) => (
               <div key={index} className="flex items-center">
                 <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: category.color }}></div>
-                <span className="text-sm">{category.name} ({category.percentage}%)</span>
+                <span className="text-sm">{category.name} Rp. {formatCurrency(category.amount)} ({category.percentage}%)</span>
               </div>
             ))}
           </div>
