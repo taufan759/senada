@@ -1,0 +1,8 @@
+{
+    "amount": 5000000.0,
+    "transaction_type": "withdrawal",
+    "merchant_category": "electronics",
+    "location": "Lagos",
+    "hour_of_day": 3,
+    "day_of_week": 5
+}
