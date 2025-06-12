@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Budget from './pages/Budget';
 import AppLayout from './components/AppLayouts';
 import Articles from './pages/Articles';
+import MLInsights from './pages/MLInsights';
 
 function App() {
   return (
@@ -40,6 +41,13 @@ function App() {
         <Route path="/budget" element={
           <ProtectedRoute allowedRoles={['user', 'admin']}>
             <Budget />
+          </ProtectedRoute>
+        } />
+
+         {/* ML Insights Route */}
+        <Route path="/ml-insights" element={
+          <ProtectedRoute allowedRoles={['user', 'admin']}>
+            <MLInsights />
           </ProtectedRoute>
         } />
         
