@@ -76,7 +76,8 @@ const Sidebar = () => {
         <div className="relative z-10 p-6 border-b border-white/10 backdrop-blur-sm">
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg">
-              <span className="text-2xl font-bold text-white">S</span>
+              {/* <span className="text-2xl font-bold text-white">S</span> */}
+              <img src="Asset 2.png" alt="" />
             </div>
             <div>
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
@@ -95,8 +96,8 @@ const Sidebar = () => {
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 relative overflow-hidden ${isActive(item.path)
-                      ? 'bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20'
-                      : 'hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md'
+                    ? 'bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20'
+                    : 'hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md'
                     }`}
                 >
                   {/* Icon container */}

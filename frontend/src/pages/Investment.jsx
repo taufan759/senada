@@ -125,7 +125,7 @@ const Investment = () => {
     }
 
     // setRiskProfile(false);
-    // setShowQuiz(false);
+    setShowQuiz(false);
     // window.location.reload();
   };
   return (
