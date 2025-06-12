@@ -15,7 +15,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -29,5 +28,6 @@
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.3"
-  }
+  },
+  "description": ""
 }
