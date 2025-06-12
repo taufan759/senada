@@ -223,8 +223,23 @@ const Transaction = () => {
           </div>
           <select id="filterCategory" class="border border-gray-300 rounded-md px-3 py-2">
             <option value="">All Categories</option>
-            <option value="Dining">Dining</option>
-            <option value="Fitness">Fitness</option>
+            <option value="Gaji">💰Gaji</option>
+            <option value="Bonus">🪙Bonus</option>
+            <option value="Dividen">💹Dividen</option>
+            <option value="Listrik">💡Listrik</option>
+            <option value="Uang Saku">💵Uang Saku</option>
+            <option value="Makan">🍔Makan</option>
+            <option value="Pakaian">👕Pakaian</option>
+            <option value="Pendidikan">🎓Pendidikan</option>
+            <option value="Peliharaan">🐶Peliharaan</option>
+            <option value="Hiburan">🎥Hiburan</option>
+            <option value="Kebugaran">🏃Kebugaran</option>
+            <option value="Hadiah">🎁Hadiah</option>
+            <option value="Transportasi">🚗Transportasi</option>
+            <option value="Penginapan">🏨Penginapan</option>
+            <option value="Kesehatan">🏥Kesehatan</option>
+            <option value="Utilitas">🔌Utilitas</option>
+            <option value="Lainnya">💬Lainnya</option>
           </select>
           <button id="clearFilterBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-md">Clear Filter</button>
         </div>

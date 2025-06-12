@@ -28,6 +28,8 @@ const Investment = () => {
     role: ''
   });
 
+  const [recommend, setRecommend] = useState();
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -43,6 +45,8 @@ const Investment = () => {
     } else {
       console.log('No token found');
     }
+
+    getRecommend();
   }, []);
 
   const handleStartQuiz = () => {
@@ -50,9 +54,28 @@ const Investment = () => {
     setLayerQuiz(1);
   };
 
-  useEffect(() => {
-    // console.log('Layer Quiz berubah:', layerQuiz);
-  }, [layerQuiz]);
+  const getRecommend = async () => {
+    try {
+      // ambil data transaksi dari API
+      const response = await fetch(`${AppSettings.api}/recommend`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        }
+      });
+
+      const data = await response.json();
+      const formattedData = data.map((d) => d)
+
+      if (data.length === 0) {
+        return;
+      }
+      setRecommend(formattedData);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleCompleteQuiz = async (e) => {
     e.preventDefault();
@@ -86,16 +109,16 @@ const Investment = () => {
       });
 
       const data = await response.json();
-      console.log('Full response:', data);
-      console.log('Rekomendasi:', data.rekomendasi);
-
-      // Akses data rekomendasi
-      data.rekomendasi.forEach((r, index) => {
-        console.log(`Rekomendasi ${index + 1}:`, r);
-      });
-
-      // Simpan ke state atau lakukan sesuatu dengan data
-      // setRecommendations(data.rekomendasi); // jika pakai useState
+      setRiskProfile(true);
+      // Memasukkan hasil ML ke Database
+      fetch(`${AppSettings.api}/recommend/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify({ ...data, profile_risiko: profileResiko })
+      })
 
     } catch (error) {
       console.error('Error:', error);
@@ -128,16 +151,128 @@ const Investment = () => {
             </div>
           </div>
         </div>
-        {!riskProfile && !showQuiz ? (
+        {!showQuiz ? (
           <>
             {/* Risk Profile */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold mb-4">Profil Risiko</h2>
-              <p className="text-gray-600 mb-4">Tentukan profil risiko Anda untuk mendapatkan rekomendasi investasi yang sesuai</p>
-              <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors"
-                onClick={handleStartQuiz}>
-                Mulai Assessment
-              </button>
+              {!recommend ? (
+                <>
+                  <p className="text-gray-600 mb-4">Tentukan profil risiko Anda untuk mendapatkan rekomendasi investasi yang sesuai</p>
+                  <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors"
+                    onClick={handleStartQuiz}>
+                    Mulai Assessment
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-gray-600 mb-4">Berikut Profile risiko anda:</p>
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+
+                    {/* Recommendation Section */}
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-20 h-20 rounded-lg flex items-center justify-center">
+                          <span className="text-6xl">🎯</span>
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-900">Rekomendasi Investasi</h2>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="text-center p-4 bg-blue-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600 mb-1">{recommend ? recommend.length : 0}</div>
+                          <div className="text-sm text-gray-600">Produk Cocok</div>
+                        </div>
+                        <div className="text-center p-4 bg-green-50 rounded-lg">
+                          <div className="text-2xl font-bold text-green-600 mb-1">
+                            {recommend && recommend.length > 0
+                              ? (
+                                (recommend.reduce((acc, rec) => acc + (parseFloat(rec.skor_kecocokan) || 0), 0) / recommend.length * 100)
+                                  .toFixed(2)
+                              )
+                              : 0
+                            }%
+                          </div>
+                          <div className="text-sm text-gray-600">Rata-rata Match</div>
+                        </div>
+                        <div className="text-center p-4 bg-orange-50 rounded-lg">
+                          <div className="text-2xl font-bold text-orange-600 mb-1">
+                            {recommend && recommend.length > 0 ? recommend[0].profile_risiko : '-'}
+                          </div>
+                          <div className="text-sm text-gray-600">Profil Risiko</div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Investment Cards Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                      {recommend.map((rec) => (
+                        <div
+                          key={rec.id}
+                          className={`rounded-xl p-6 shadow-sm border border-gray-200 bg-blue-50 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer
+                            }`}
+                        >
+                          {/* Card Header */}
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                {rec.nama_produk}
+                              </h3>
+
+                              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                                Jenis: {rec.jenis_produk}
+                              </p>
+                            </div>
+
+                            <div className="text-right">
+                              <div className="text-sm text-gray-500 mb-1">Skor Kecocokan</div>
+                              <div className="inline-block bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+                                {(rec.skor_kecocokan * 100).toFixed(2)}%
+                              </div>
+                            </div>
+                          </div>
+
+
+                          {/* Risk Level and CTA */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-gray-500">Risiko:</span>
+                              <span className={`bg-red-500 text-white px-2 py-1 rounded text-xs font-medium`}>
+                                {rec.tingkat_risiko}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* {recommend && Array.isArray(recommend) && recommend.length > 0 ? (
+                      recommend.map((rec, idx) => (
+                        <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-blue-50">
+                          <h3 className="font-semibold text-lg mb-2">{rec.nama_produk || 'Rekomendasi Investasi'}</h3>
+                          <p className="text-sm text-gray-700 mb-2">{rec.deskripsi || rec.keterangan || 'Produk investasi yang sesuai dengan profil risiko Anda.'}</p>
+                          <div className="flex gap-5">
+                            {rec.skor_kecocokan && (
+                              <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded mb-2">
+                                Skor Kecocokan: {rec.skor_kecocokan * 100 + '%'}
+                              </span>
+                            )}
+                            {rec.tingkat_risiko && (
+                              <div className="inline-block bg-red-700 text-white text-xs px-2 py-1 rounded mb-2">Risiko: {rec.tingkat_risiko}</div>
+                            )}
+                          </div>
+                          <button className="text-primary hover:underline text-sm mt-2">Pelajari Lebih Lanjut →</button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500">Belum ada rekomendasi investasi.</div>
+                    )} */}
+                  </div>
+                  <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors"
+                    onClick={handleStartQuiz}>
+                    Ulang Assessment
+                  </button>
+                </>
+              )}
             </div>
           </>
         ) : (
@@ -441,7 +576,7 @@ const Investment = () => {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </AppLayout >
   );
 };
 

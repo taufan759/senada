@@ -4,6 +4,7 @@ import { addTransaction, budgetTransactions, deleteTransaction, getTransaction, 
 import { verifyToken } from '../middleware/verifyToken.js';
 import authorize from '../middleware/authorize.js';
 import { addBudget, deleteBudget, getBudget, updateBudget } from '../controllers/BudgetController.js';
+import { addRecommend, getRecommend } from '../controllers/RecommendController.js';
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.delete('/budget/delete/:budgetId', deleteBudget);
 router.put('/budget/update/:budgetId', updateBudget);
 router.get('/budget/transactions', budgetTransactions);
 
+router.get('/recommend', getRecommend);
 router.post('/recommend', async (req, res) => {
   try {
     const response = await fetch('http://localhost:5000/recommend', {
@@ -43,6 +45,7 @@ router.post('/recommend', async (req, res) => {
     res.status(500).json({ error: 'ML Service Error' });
   }
 });
+router.post('/recommend/add', addRecommend)
 
 router.post('/authenticate', authenticate);
 router.post('/register', register);
