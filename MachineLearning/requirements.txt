@@ -1,0 +1,8 @@
+Flask 
+numpy 
+pandas 
+tensorflow==2.10.0 
+scikit-learn 
+mysql-connector-python 
+matplotlib 
+seaborn 
