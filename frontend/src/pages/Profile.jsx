@@ -7,6 +7,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [userInfo, setUserInfo] = useState({
     name: '',
     email: '',
@@ -26,29 +27,84 @@ const Profile = () => {
     confirmPassword: ''
   });
 
-  useEffect(() => {
+  // Load profile data from server
+  const loadProfileData = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      if (token) {
-        const decoded = jwtDecode(token);
-        const user = {
-          name: decoded.name || '',
-          email: decoded.email || '',
-          role: decoded.role || 'user'
-        };
-        setUserInfo(user);
-        setProfileData(prev => ({
-          ...prev,
-          name: user.name,
-          email: user.email
-        }));
-      } else {
+      if (!token) {
         navigate('/login');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('Loaded profile data:', userData);
+        
+        // Format date untuk input date HTML (YYYY-MM-DD)
+        const formattedDate = userData.dateOfBirth ? 
+          new Date(userData.dateOfBirth).toISOString().split('T')[0] : '';
+
+        setProfileData({
+          name: userData.name || '',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          address: userData.address || '',
+          dateOfBirth: formattedDate,
+          occupation: userData.occupation || ''
+        });
+
+        setUserInfo({
+          name: userData.name || '',
+          email: userData.email || '',
+          role: userData.role || 'user'
+        });
+      } else if (response.status === 401) {
+        // Token expired
+        localStorage.removeItem('accessToken');
+        navigate('/login');
+      } else {
+        console.error('Failed to load profile data');
       }
     } catch (error) {
-      console.error('Error decoding token:', error);
-      navigate('/login');
+      console.error('Error loading profile:', error);
+    } finally {
+      setIsLoadingProfile(false);
     }
+  };
+
+  useEffect(() => {
+    const initializeProfile = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          const decoded = jwtDecode(token);
+          
+          // Check if token is expired
+          if (decoded.exp * 1000 < Date.now()) {
+            localStorage.removeItem('accessToken');
+            navigate('/login');
+            return;
+          }
+
+          await loadProfileData();
+        } else {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error initializing profile:', error);
+        navigate('/login');
+      }
+    };
+
+    initializeProfile();
   }, [navigate]);
 
   const handleProfileUpdate = async (e) => {
@@ -57,25 +113,43 @@ const Profile = () => {
     
     try {
       const token = localStorage.getItem('accessToken');
+      
+      // Prepare data to send
+      const updateData = {
+        name: profileData.name.trim(),
+        email: profileData.email.trim(),
+        phone: profileData.phone.trim(),
+        address: profileData.address.trim(),
+        dateOfBirth: profileData.dateOfBirth,
+        occupation: profileData.occupation.trim()
+      };
+
+      console.log('Sending profile update:', updateData);
+
       const response = await fetch('http://localhost:3000/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(profileData)
+        body: JSON.stringify(updateData)
       });
 
       const data = await response.json();
+      console.log('Profile update response:', data);
 
       if (response.ok) {
         alert('Profil berhasil diperbarui! 🎉');
-        // Update userInfo jika diperlukan
+        
+        // Update userInfo untuk header
         setUserInfo(prev => ({
           ...prev,
           name: profileData.name,
           email: profileData.email
         }));
+
+        // Reload profile data to ensure sync
+        await loadProfileData();
       } else {
         alert(`Error: ${data.msg || data.message}`);
       }
@@ -147,6 +221,18 @@ const Profile = () => {
   };
 
   const roleInfo = getRoleDisplay(userInfo.role);
+
+  if (isLoadingProfile) {
+    return (
+      <AppLayout>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>

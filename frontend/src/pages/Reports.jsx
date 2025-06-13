@@ -126,26 +126,415 @@ const Reports = () => {
     }).format(amount);
   };
 
+  // FIXED: Export PDF dengan styling yang lebih baik
   const exportToPDF = () => {
-    window.print();
+    // Buat window baru untuk print
+    const printWindow = window.open('', '_blank');
+    const periodText = filterPeriod === 'month' 
+      ? `${monthNames[selectedMonth - 1]} ${selectedYear}` 
+      : `Tahun ${selectedYear}`;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Laporan Keuangan - ${periodText}</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          
+          body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            background: white;
+          }
+          
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+          }
+          
+          .header h1 {
+            font-size: 24px;
+            color: #1e40af;
+            margin-bottom: 5px;
+          }
+          
+          .header p {
+            color: #666;
+            font-size: 14px;
+          }
+          
+          .period-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: center;
+          }
+          
+          .summary-section {
+            margin-bottom: 30px;
+          }
+          
+          .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+          }
+          
+          .summary-card {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+          }
+          
+          .income-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+          }
+          
+          .expense-card {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+          }
+          
+          .balance-card {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+          }
+          
+          .summary-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+          }
+          
+          .summary-card .amount {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          
+          .summary-card .count {
+            font-size: 11px;
+            opacity: 0.8;
+          }
+          
+          .table-section {
+            margin-bottom: 30px;
+          }
+          
+          .table-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #1e40af;
+          }
+          
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+          }
+          
+          th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+          }
+          
+          th {
+            background: #f9fafb;
+            font-weight: bold;
+            color: #374151;
+            font-size: 11px;
+            text-transform: uppercase;
+          }
+          
+          td {
+            font-size: 11px;
+          }
+          
+          .type-income {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+          }
+          
+          .type-expense {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+          }
+          
+          .amount-positive {
+            color: #059669;
+            font-weight: bold;
+          }
+          
+          .amount-negative {
+            color: #dc2626;
+            font-weight: bold;
+          }
+          
+          .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 10px;
+          }
+          
+          .page-break {
+            page-break-before: always;
+          }
+          
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>LAPORAN KEUANGAN</h1>
+          <p>SENADA Financial Manager</p>
+        </div>
+        
+        <div class="period-info">
+          <strong>Periode: ${periodText}</strong><br>
+          Dicetak pada: ${new Date().toLocaleDateString('id-ID', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </div>
+        
+        <div class="summary-section">
+          <h3>Ringkasan Keuangan</h3>
+          <div class="summary-cards">
+            <div class="summary-card income-card">
+              <h3>Total Pemasukan</h3>
+              <div class="amount">${formatCurrency(totalIncome)}</div>
+              <div class="count">${filteredTransactions.filter(t => t.type === 'Income').length} transaksi</div>
+            </div>
+            <div class="summary-card expense-card">
+              <h3>Total Pengeluaran</h3>
+              <div class="amount">${formatCurrency(totalExpense)}</div>
+              <div class="count">${filteredTransactions.filter(t => t.type === 'Expense').length} transaksi</div>
+            </div>
+            <div class="summary-card balance-card">
+              <h3>Saldo Bersih</h3>
+              <div class="amount">${formatCurrency(netIncome)}</div>
+              <div class="count">${netIncome >= 0 ? 'Surplus' : 'Defisit'}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-section">
+          <h3>Detail Transaksi</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Tipe</th>
+                <th>Kategori</th>
+                <th>Keterangan</th>
+                <th style="text-align: right;">Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredTransactions.map(t => `
+                <tr>
+                  <td>${t.date}</td>
+                  <td>
+                    <span class="${t.type === 'Income' ? 'type-income' : 'type-expense'}">
+                      ${t.type === 'Income' ? 'Pemasukan' : 'Pengeluaran'}
+                    </span>
+                  </td>
+                  <td>${t.category}</td>
+                  <td>${t.transactionName}</td>
+                  <td style="text-align: right;" class="${t.type === 'Income' ? 'amount-positive' : 'amount-negative'}">
+                    ${t.type === 'Income' ? '+' : '-'}${formatCurrency(t.amount)}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="footer">
+          <p>Laporan ini digenerate secara otomatis oleh SENADA Financial Manager</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Tunggu loading selesai kemudian print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
   };
 
+  // FIXED: Export Excel menggunakan proper Excel format
   const exportToExcel = () => {
-    // Simplified CSV export
-    const headers = ['Tanggal', 'Tipe', 'Kategori', 'Nama Transaksi', 'Jumlah', 'Deskripsi'];
-    const csvContent = [
-      headers.join(','),
-      ...filteredTransactions.map(t => 
-        [t.date, t.type, t.category, t.transactionName, t.amount, t.description || ''].join(',')
-      )
-    ].join('\n');
+    // Buat script untuk load SheetJS library
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = () => {
+      const XLSX = window.XLSX;
+      
+      // Data untuk summary
+      const summaryData = [
+        ['LAPORAN KEUANGAN'],
+        [`Periode: ${filterPeriod === 'month' ? `${monthNames[selectedMonth - 1]} ${selectedYear}` : `Tahun ${selectedYear}`}`],
+        [`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`],
+        [''],
+        ['RINGKASAN KEUANGAN'],
+        ['Total Pemasukan', formatCurrency(totalIncome)],
+        ['Total Pengeluaran', formatCurrency(totalExpense)],
+        ['Saldo Bersih', formatCurrency(netIncome)],
+        [''],
+        ['DETAIL TRANSAKSI'],
+        ['Tanggal', 'Tipe', 'Kategori', 'Keterangan', 'Jumlah', 'Deskripsi']
+      ];
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+      // Data transaksi
+      const transactionData = filteredTransactions.map(t => [
+        t.date,
+        t.type === 'Income' ? 'Pemasukan' : 'Pengeluaran',
+        t.category,
+        t.transactionName,
+        Number(t.amount),
+        t.description || ''
+      ]);
+
+      // Gabungkan data
+      const allData = [...summaryData, ...transactionData];
+
+      // Buat worksheet
+      const ws = XLSX.utils.aoa_to_sheet(allData);
+
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 12 }, // Tanggal
+        { wch: 15 }, // Tipe
+        { wch: 20 }, // Kategori
+        { wch: 30 }, // Keterangan
+        { wch: 18 }, // Jumlah
+        { wch: 25 }  // Deskripsi
+      ];
+
+      // Style untuk header
+      const headerStyle = {
+        font: { bold: true },
+        fill: { fgColor: { rgb: "CCCCCC" } }
+      };
+
+      // Style untuk summary
+      const summaryStyle = {
+        font: { bold: true, size: 12 },
+        fill: { fgColor: { rgb: "E6F3FF" } }
+      };
+
+      // Apply styles
+      ws['A1'] = { v: 'LAPORAN KEUANGAN', s: { font: { bold: true, size: 16 } } };
+      ws['A5'] = { v: 'RINGKASAN KEUANGAN', s: summaryStyle };
+      ws['A10'] = { v: 'DETAIL TRANSAKSI', s: summaryStyle };
+
+      // Style untuk header tabel
+      const headerRow = 10; // Row index untuk header tabel (0-based)
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
+        const cellRef = col + (headerRow + 1);
+        if (ws[cellRef]) {
+          ws[cellRef].s = headerStyle;
+        }
+      });
+
+      // Format currency columns
+      transactionData.forEach((_, index) => {
+        const rowIndex = summaryData.length + index + 1;
+        const amountCell = `E${rowIndex}`;
+        if (ws[amountCell]) {
+          ws[amountCell].z = '"Rp "#,##0';
+        }
+      });
+
+      // Buat workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Laporan Keuangan");
+
+      // Download file
+      const fileName = `Laporan-Keuangan-${selectedYear}-${selectedMonth < 10 ? '0' + selectedMonth : selectedMonth}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    };
+
+    // Handle jika library gagal load
+    script.onerror = () => {
+      console.error('Failed to load XLSX library');
+      // Fallback ke CSV
+      exportToCSV();
+    };
+
+    document.head.appendChild(script);
+  };
+
+  // Fallback CSV export
+  const exportToCSV = () => {
+    const periodText = filterPeriod === 'month' 
+      ? `${monthNames[selectedMonth - 1]} ${selectedYear}` 
+      : `Tahun ${selectedYear}`;
+
+    const csvContent = [
+      ['LAPORAN KEUANGAN'],
+      [`Periode: ${periodText}`],
+      [`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`],
+      [''],
+      ['RINGKASAN KEUANGAN'],
+      ['Total Pemasukan', totalIncome],
+      ['Total Pengeluaran', totalExpense],
+      ['Saldo Bersih', netIncome],
+      [''],
+      ['DETAIL TRANSAKSI'],
+      ['Tanggal', 'Tipe', 'Kategori', 'Keterangan', 'Jumlah', 'Deskripsi'],
+      ...filteredTransactions.map(t => [
+        t.date,
+        t.type === 'Income' ? 'Pemasukan' : 'Pengeluaran',
+        t.category,
+        t.transactionName,
+        t.amount,
+        t.description || ''
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `laporan-keuangan-${selectedYear}-${selectedMonth}.csv`;
+    a.download = `laporan-keuangan-${selectedYear}-${selectedMonth < 10 ? '0' + selectedMonth : selectedMonth}.csv`;
     a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   if (loading) {
@@ -427,28 +816,6 @@ const Reports = () => {
           </p>
         </div>
       </div>
-
-      {/* Print Styles */}
-      <style jsx>{`
-        @media print {
-          @page {
-            margin: 20mm;
-          }
-          
-          body {
-            print-color-adjust: exact;
-            -webkit-print-color-adjust: exact;
-          }
-          
-          .print\\:hidden {
-            display: none !important;
-          }
-          
-          .print\\:block {
-            display: block !important;
-          }
-        }
-      `}</style>
     </AppLayout>
   );
 };

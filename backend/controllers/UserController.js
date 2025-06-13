@@ -89,32 +89,37 @@ export const getUserProfile = async (req, res) => {
   }
 }
 
-// Tambahan untuk update profil
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.userId; // Dari middleware verifyToken
     const { name, email, phone, address, dateOfBirth, occupation } = req.body;
 
+    console.log('Update Profile Request:', { userId, name, email, phone, address, dateOfBirth, occupation });
+
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ msg: "User not found" });
 
+    // Update all profile fields
     await user.update({
       name: name || user.name,
       email: email || user.email,
-      // Jika ingin menambah field lain, update model dulu
+      phone: phone || user.phone,
+      address: address || user.address,
+      dateOfBirth: dateOfBirth || user.dateOfBirth,
+      occupation: occupation || user.occupation
+    });
+
+    // Return updated user data
+    const updatedUser = await User.findByPk(userId, {
+      attributes: ['userId', 'name', 'email', 'role', 'phone', 'address', 'dateOfBirth', 'occupation']
     });
 
     res.status(200).json({ 
       msg: "Profile updated successfully",
-      user: {
-        userId: user.userId,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+      user: updatedUser
     });
   } catch (error) {
-    console.error(error.message);
+    console.error('Update Profile Error:', error.message);
     res.status(500).json({ message: error.message });
   }
 }

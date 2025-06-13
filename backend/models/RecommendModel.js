@@ -30,7 +30,7 @@ const InvestmentRecommendation = db.define('investmentRecommendation', {
     allowNull: false,
   },
   tingkat_risiko: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
 }, {
