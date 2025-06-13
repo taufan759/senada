@@ -17,10 +17,10 @@ const Sidebar = () => {
     { title: 'Dashboard', path: '/dashboard', icon: '🏠', gradient: 'from-blue-500 to-cyan-400' },
     { title: 'Transaksi', path: '/transactions', icon: '💰', gradient: 'from-green-500 to-emerald-400' },
     { title: 'Anggaran', path: '/budget', icon: '📊', gradient: 'from-purple-500 to-pink-400' },
-    { 
-      title: 'AI Insights', 
-      path: '/ml-insights', 
-      icon: '🤖', 
+    {
+      title: 'AI Insights',
+      path: '/ml-insights',
+      icon: '🤖',
       gradient: 'from-yellow-500 to-orange-400',
       isNew: true
     },
@@ -116,12 +116,13 @@ const Sidebar = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-cyan-500/10"></div>
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-full h-32 bg-gradient-to-tl from-cyan-400/20 to-blue-600/20 blur-3xl"></div>
-        
+
         {/* Header */}
         <div className="relative z-10 p-6 border-b border-white/10 backdrop-blur-sm">
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg">
-              <span className="text-2xl font-bold text-white">S</span>
+              {/* <span className="text-2xl font-bold text-white">S</span> */}
+              <img src="Asset 2.png" alt="" />
             </div>
             <div>
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
@@ -139,34 +140,33 @@ const Sidebar = () => {
               <div key={index} className="relative group">
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 relative overflow-hidden ${
-                    isActive(item.path)
-                      ? 'bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20'
-                      : 'hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md'
-                  }`}
+                  className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 relative overflow-hidden ${isActive(item.path)
+                    ? 'bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20'
+                    : 'hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md'
+                    }`}
                 >
                   {/* Icon container */}
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300`}>
                     <span className="text-lg">{item.icon}</span>
                   </div>
-                  
+
                   {/* Text */}
                   <span className="font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
                     {item.title}
                   </span>
-                  
+
                   {/* New Badge */}
                   {item.isNew && (
                     <span className="ml-auto bg-gradient-to-r from-yellow-400 to-orange-400 text-xs px-2 py-1 rounded-full text-blue-900 font-bold animate-pulse">
                       NEW
                     </span>
                   )}
-                  
+
                   {/* Active indicator */}
                   {isActive(item.path) && (
                     <div className="absolute right-3 w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"></div>
                   )}
-                  
+
                   {/* Hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-400/5 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
                 </Link>

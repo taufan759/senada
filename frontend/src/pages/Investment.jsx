@@ -10,6 +10,7 @@ import AppSettings from '../AppSettings';
 const Investment = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [layerQuiz, setLayerQuiz] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   // Quiz states
   const [tujuan, setTujuan] = useState('');
@@ -28,7 +29,7 @@ const Investment = () => {
     role: ''
   });
 
-  const [recommend, setRecommend] = useState();
+  const [recommend, setRecommend] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -51,23 +52,35 @@ const Investment = () => {
 
   const getRecommend = async () => {
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+
       const response = await fetch(`${AppSettings.api}/recommend`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${token}`,
         }
       });
 
-      const data = await response.json();
-      const formattedData = data.map((d) => d)
-
-      if (data.length === 0) {
-        return;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      setRecommend(formattedData);
+
+      const data = await response.json();
+      console.log('Recommendations fetched:', data);
+      
+      if (Array.isArray(data) && data.length > 0) {
+        setRecommend(data);
+      } else {
+        setRecommend([]);
+      }
     } catch (error) {
-      console.log(error)
+      console.error('Error fetching recommendations:', error);
+      setRecommend([]);
     }
   }
 
@@ -78,18 +91,30 @@ const Investment = () => {
 
   const handleCompleteQuiz = async (e) => {
     e.preventDefault();
-
-    let profileResiko = parseInt(behavior) + parseInt(priority) + parseInt(jenisInvestasi);
-
-    if (profileResiko >= 3 && profileResiko <= 5) {
-      profileResiko = 'Konservatif';
-    } else if (profileResiko >= 6 && profileResiko <= 10) {
-      profileResiko = 'Moderat';
-    } else if (profileResiko >= 11 && profileResiko <= 15) {
-      profileResiko = 'Agresif';
-    }
+    setLoading(true);
 
     try {
+      let profileResiko = parseInt(behavior) + parseInt(priority) + parseInt(jenisInvestasi);
+
+      if (profileResiko >= 3 && profileResiko <= 5) {
+        profileResiko = 'Konservatif';
+      } else if (profileResiko >= 6 && profileResiko <= 10) {
+        profileResiko = 'Moderat';
+      } else if (profileResiko >= 11 && profileResiko <= 15) {
+        profileResiko = 'Agresif';
+      }
+
+      console.log('Sending quiz data:', {
+        usia: usia,
+        profil_risiko: profileResiko,
+        pendapatan_bulanan_juta: pendapatan,
+        tingkat_pengetahuan: pemahaman,
+        tujuan_keuangan: tujuan,
+        target_dana_juta: targetDana,
+        jangka_waktu_thn: jangkaWaktu
+      });
+
+      // Get recommendations
       const response = await fetch(`${AppSettings.api}/recommend`, {
         method: 'POST',
         headers: {
@@ -106,23 +131,55 @@ const Investment = () => {
         })
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('Recommendation response:', data);
       
-      fetch(`${AppSettings.api}/recommend/add`, {
+      // Save recommendations to database
+      const saveResponse = await fetch(`${AppSettings.api}/recommend/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         },
-        body: JSON.stringify({ ...data, profile_risiko: profileResiko })
-      })
+        body: JSON.stringify({ 
+          rekomendasi: data.rekomendasi,
+          profile_risiko: profileResiko 
+        })
+      });
 
-      setRecommend([{ ...data, profile_risiko: profileResiko }]);
+      if (!saveResponse.ok) {
+        throw new Error(`Save error! status: ${saveResponse.status}`);
+      }
+
+      const saveResult = await saveResponse.json();
+      console.log('Save result:', saveResult);
+
+      // Update local state
+      await getRecommend(); // Refresh data from server
+      
       setShowQuiz(false);
       setLayerQuiz(0);
+      
+      // Reset form
+      setTujuan('');
+      setUsia('');
+      setPendapatan('');
+      setTargetDana('');
+      setJangkaWaktu('');
+      setPemahaman('');
+      setBehavior('');
+      setPriority('');
+      setJenisInvestasi('');
 
     } catch (error) {
       console.error('Error:', error);
+      alert('Terjadi kesalahan saat menyimpan rekomendasi. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -819,11 +876,11 @@ const Investment = () => {
                             ← Kembali
                           </button>
                           <button
-                            disabled={!priority || !jenisInvestasi}
+                            disabled={!priority || !jenisInvestasi || loading}
                             className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed"
                             type='submit'
                           >
-                            🎉 Selesai Assessment
+                            {loading ? '⏳ Menyimpan...' : '🎉 Selesai Assessment'}
                           </button>
                         </div>
                       </div>
