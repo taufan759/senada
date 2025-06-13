@@ -150,7 +150,7 @@ const Profile = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-none px-4 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Profil & Pengaturan</h1>
@@ -158,20 +158,20 @@ const Profile = () => {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 mb-8 text-white">
-          <div className="flex items-center space-x-6">
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-8 mb-8 text-white">
+          <div className="flex items-center space-x-4 md:space-x-6">
             <div className="relative">
               <img
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}&background=ffffff&color=6366f1&size=80&rounded=true&bold=true`}
                 alt="Profile"
-                className="w-20 h-20 rounded-full ring-4 ring-white/30"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full ring-4 ring-white/30"
               />
               <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center">
                 <span className="text-sm">📷</span>
               </button>
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{userInfo.name}</h2>
+              <h2 className="text-xl md:text-2xl font-bold">{userInfo.name}</h2>
               <p className="text-blue-200 mb-2">{userInfo.email}</p>
               <div className="flex items-center space-x-2">
                 <span className="text-sm">{roleInfo.icon}</span>
@@ -202,7 +202,7 @@ const Profile = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-3xl shadow-lg p-8">
+        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8">
           {activeTab === 'profile' && (
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-6">Detail Profil</h3>

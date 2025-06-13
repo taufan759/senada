@@ -448,15 +448,15 @@ const MLInsights = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full max-w-none px-4 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl">
-              <span className="text-3xl">🤖</span>
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl">
+              <span className="text-2xl md:text-3xl">🤖</span>
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
                 AI Financial Insights
               </h1>
               <p className="text-gray-600 mt-1">
@@ -467,8 +467,8 @@ const MLInsights = () => {
           
           {/* Info Banner */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-lg">ℹ️</span>
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-sm md:text-lg">ℹ️</span>
             </div>
             <p className="text-sm text-gray-700">
               <strong className="text-gray-800">Pro tip:</strong> Our AI analyzes your transaction patterns from the last 6 months to provide accurate predictions. The more data you have, the better the predictions!
@@ -488,7 +488,7 @@ const MLInsights = () => {
               }`}
             >
               <span>📈</span>
-              <span>Cashflow Prediction</span>
+              <span className="hidden sm:block">Cashflow Prediction</span>
             </button>
             <button
               onClick={() => setActiveTab('tips')}
@@ -499,7 +499,7 @@ const MLInsights = () => {
               }`}
             >
               <span>💡</span>
-              <span>Financial Tips</span>
+              <span className="hidden sm:block">Financial Tips</span>
             </button>
             <button
               onClick={() => setActiveTab('anomaly')}
@@ -510,7 +510,7 @@ const MLInsights = () => {
               }`}
             >
               <span>🔍</span>
-              <span>Anomaly Detection</span>
+              <span className="hidden sm:block">Anomaly Detection</span>
             </button>
           </div>
         </div>
