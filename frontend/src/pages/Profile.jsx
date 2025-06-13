@@ -132,6 +132,12 @@ const Profile = () => {
     }
   };
 
+  // Hanya 2 tab: Profile dan Security
+  const tabs = [
+    { id: 'profile', name: 'Detail Profil', icon: '👤' },
+    { id: 'security', name: 'Keamanan', icon: '🔐' }
+  ];
+
   const getRoleDisplay = (role) => {
     const roles = {
       'admin': { text: 'Admin', color: 'bg-orange-500', icon: '🛡️' },
@@ -142,51 +148,34 @@ const Profile = () => {
 
   const roleInfo = getRoleDisplay(userInfo.role);
 
-  // Mobile Tab Component
-  const MobileTab = ({ id, label, icon, isActive, onClick }) => (
-    <button
-      onClick={() => onClick(id)}
-      className={`flex items-center justify-center p-3 rounded-lg transition-all duration-300 ${
-        isActive 
-          ? 'bg-blue-600 text-white shadow-lg' 
-          : 'bg-white text-gray-600 hover:bg-gray-50'
-      }`}
-    >
-      <span className="text-lg mr-2">{icon}</span>
-      <span className="text-sm font-medium">{label}</span>
-    </button>
-  );
-
   return (
     <AppLayout>
-      {/* MOBILE FIRST DESIGN */}
-      <div className="p-4 space-y-4">
-        
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">Profil & Pengaturan</h1>
-          <p className="text-sm text-gray-600">Kelola informasi akun dan keamanan kamu</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profil & Pengaturan</h1>
+          <p className="text-gray-600">Kelola informasi akun dan keamanan kamu</p>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg p-6 text-white">
-          <div className="flex items-center space-x-4">
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 mb-8 text-white">
+          <div className="flex items-center space-x-6">
             <div className="relative">
               <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}&background=ffffff&color=6366f1&size=60&rounded=true&bold=true`}
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}&background=ffffff&color=6366f1&size=80&rounded=true&bold=true`}
                 alt="Profile"
-                className="w-15 h-15 rounded-full ring-4 ring-white/30"
+                className="w-20 h-20 rounded-full ring-4 ring-white/30"
               />
-              <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center">
-                <span className="text-xs">📷</span>
+              <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center">
+                <span className="text-sm">📷</span>
               </button>
             </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">{userInfo.name}</h2>
-              <p className="text-blue-200 text-sm mb-2">{userInfo.email}</p>
+            <div>
+              <h2 className="text-2xl font-bold">{userInfo.name}</h2>
+              <p className="text-blue-200 mb-2">{userInfo.email}</p>
               <div className="flex items-center space-x-2">
                 <span className="text-sm">{roleInfo.icon}</span>
-                <span className={`text-xs px-2 py-1 rounded-full ${roleInfo.color} text-white font-medium`}>
+                <span className={`text-xs px-3 py-1 rounded-full ${roleInfo.color} text-white font-medium`}>
                   {roleInfo.text}
                 </span>
               </div>
@@ -194,102 +183,95 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Tabs */}
-        <div className="grid grid-cols-2 gap-2">
-          <MobileTab
-            id="profile"
-            label="Detail Profil"
-            icon="👤"
-            isActive={activeTab === 'profile'}
-            onClick={setActiveTab}
-          />
-          <MobileTab
-            id="security"
-            label="Keamanan"
-            icon="🔐"
-            isActive={activeTab === 'security'}
-            onClick={setActiveTab}
-          />
+        {/* Tabs */}
+        <div className="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-2xl">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-white text-blue-600 shadow-md'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <span>{tab.icon}</span>
+              <span className="hidden md:block">{tab.name}</span>
+            </button>
+          ))}
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-3xl shadow-lg p-8">
           {activeTab === 'profile' && (
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-lg">👤</span>
-                <h3 className="text-lg font-bold text-gray-900">Detail Profil</h3>
-              </div>
-              <form onSubmit={handleProfileUpdate} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                  <input
-                    type="text"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({...profileData, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    required
-                  />
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Detail Profil</h3>
+              <form onSubmit={handleProfileUpdate} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      value={profileData.name}
+                      onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+                    <input
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="+62 812-3456-7890"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+                    <input
+                      type="date"
+                      value={profileData.dateOfBirth}
+                      onChange={(e) => setProfileData({...profileData, dateOfBirth: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pekerjaan</label>
+                    <input
+                      type="text"
+                      value={profileData.occupation}
+                      onChange={(e) => setProfileData({...profileData, occupation: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Software Engineer"
+                    />
+                  </div>
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
-                  <input
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    placeholder="+62 812-3456-7890"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
-                  <input
-                    type="date"
-                    value={profileData.dateOfBirth}
-                    onChange={(e) => setProfileData({...profileData, dateOfBirth: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pekerjaan</label>
-                  <input
-                    type="text"
-                    value={profileData.occupation}
-                    onChange={(e) => setProfileData({...profileData, occupation: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    placeholder="Software Engineer"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
                   <textarea
                     value={profileData.address}
                     onChange={(e) => setProfileData({...profileData, address: e.target.value})}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Jl. Sudirman No. 123, Jakarta"
                   />
                 </div>
-                
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-medium transition-all duration-300"
                 >
                   {isLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </button>
@@ -299,75 +281,56 @@ const Profile = () => {
 
           {activeTab === 'security' && (
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-lg">🔐</span>
-                <h3 className="text-lg font-bold text-gray-900">Keamanan Akun</h3>
-              </div>
-              
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                <div className="flex items-start">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Keamanan Akun</h3>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center">
                   <span className="text-yellow-600 mr-2">⚠️</span>
                   <p className="text-sm text-yellow-800">
                     Pastikan password baru minimal 6 karakter dan berbeda dari password lama.
                   </p>
                 </div>
               </div>
-              
-              <form onSubmit={handlePasswordChange} className="space-y-4">
+              <form onSubmit={handlePasswordChange} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password Saat Ini</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password Saat Ini</label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     minLength={6}
                     required
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password Baru</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     minLength={6}
                     required
                   />
                 </div>
-                
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                  className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-medium transition-all duration-300"
                 >
                   {isLoading ? 'Mengubah...' : 'Ubah Password'}
                 </button>
               </form>
-
-              {/* Security Tips */}
-              <div className="mt-6 bg-blue-50 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">💡 Tips Keamanan</h4>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  <li>• Gunakan kombinasi huruf besar, kecil, angka, dan simbol</li>
-                  <li>• Jangan gunakan password yang sama di aplikasi lain</li>
-                  <li>• Ganti password secara berkala (3-6 bulan sekali)</li>
-                  <li>• Jangan bagikan password kepada siapapun</li>
-                </ul>
-              </div>
             </div>
           )}
         </div>
