@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate, getUsers, register } from '../controllers/UserController.js';
+import { getUsers, authenticate, register, updateProfile, changePassword } from '../controllers/UserController.js';
 import { addTransaction, budgetTransactions, deleteTransaction, getTransaction, updateTransaction } from '../controllers/TransactionController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import authorize from '../middleware/authorize.js';
@@ -168,5 +168,7 @@ router.post('/recommend/add', addRecommend);
 
 router.post('/authenticate', authenticate);
 router.post('/register', register);
+router.put('/profile', verifyToken, updateProfile);
+router.put('/change-password', verifyToken, changePassword);
 
 export default router;

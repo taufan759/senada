@@ -1,0 +1,322 @@
+/* Sidebar.css - Mobile First Responsive Design */
+
+/* Mobile Header Styles */
+.mobile-header {
+  @apply xl:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-lg;
+  padding: 0.75rem 1rem;
+}
+
+.mobile-header-content {
+  @apply flex items-center justify-between;
+}
+
+.mobile-logo {
+  @apply flex items-center space-x-2;
+}
+
+.mobile-logo-icon {
+  @apply w-7 h-7 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center;
+}
+
+.mobile-logo-text {
+  @apply text-lg font-bold;
+}
+
+/* Hamburger Menu - Proper Size */
+.hamburger-button {
+  @apply w-9 h-9 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition-colors relative z-60;
+}
+
+.hamburger-lines {
+  @apply space-y-1;
+}
+
+.hamburger-line {
+  @apply w-4 h-0.5 bg-white transition-all duration-300;
+}
+
+.hamburger-line.open-1 {
+  transform: rotate(45deg) translate(3px, 3px);
+}
+
+.hamburger-line.open-2 {
+  opacity: 0;
+}
+
+.hamburger-line.open-3 {
+  transform: rotate(-45deg) translate(3px, -3px);
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  @apply xl:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300;
+}
+
+/* Desktop Sidebar */
+.desktop-sidebar {
+  @apply hidden xl:flex bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white w-72 min-h-screen flex-col shadow-2xl relative overflow-hidden;
+}
+
+/* Mobile Sidebar */
+.mobile-sidebar {
+  @apply xl:hidden fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white min-h-screen flex flex-col shadow-2xl relative overflow-hidden transition-transform duration-300 ease-in-out;
+}
+
+.mobile-sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.mobile-sidebar.open {
+  transform: translateX(0);
+}
+
+/* Background Decoration */
+.sidebar-bg-decoration {
+  @apply absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-cyan-500/10;
+}
+
+.sidebar-bg-top {
+  @apply absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 blur-3xl;
+}
+
+.sidebar-bg-bottom {
+  @apply absolute bottom-0 right-0 w-full h-32 bg-gradient-to-tl from-cyan-400/20 to-blue-600/20 blur-3xl;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  @apply relative z-10 p-6 border-b border-white/10 backdrop-blur-sm;
+}
+
+.sidebar-header.mobile {
+  padding-top: 5rem; /* Space for mobile header */
+}
+
+.sidebar-logo {
+  @apply flex items-center space-x-3 group;
+}
+
+.sidebar-logo-icon {
+  @apply w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg;
+}
+
+.sidebar-logo-text {
+  @apply text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent;
+}
+
+.sidebar-logo-subtitle {
+  @apply text-xs text-gray-300 -mt-1;
+}
+
+/* Navigation */
+.sidebar-nav {
+  @apply flex-grow p-4 relative z-10;
+}
+
+.sidebar-nav.mobile {
+  @apply overflow-y-auto;
+}
+
+.nav-menu {
+  @apply space-y-2;
+}
+
+.nav-item {
+  @apply relative group;
+}
+
+.nav-link {
+  @apply flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 relative overflow-hidden;
+}
+
+.nav-link.active {
+  @apply bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20;
+}
+
+.nav-link.inactive {
+  @apply hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md;
+}
+
+.nav-icon {
+  @apply w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300;
+}
+
+.nav-text {
+  @apply font-medium text-white group-hover:text-blue-300 transition-colors duration-300;
+}
+
+.nav-badge-new {
+  @apply ml-auto bg-gradient-to-r from-yellow-400 to-orange-400 text-xs px-2 py-1 rounded-full text-blue-900 font-bold animate-pulse;
+}
+
+.nav-active-indicator {
+  @apply absolute right-3 w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50;
+}
+
+.nav-hover-effect {
+  @apply absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-400/5 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl;
+}
+
+/* User Profile Section */
+.sidebar-profile {
+  @apply relative z-10 p-4 border-t border-white/10 backdrop-blur-sm;
+}
+
+.profile-card {
+  @apply bg-white/10 backdrop-blur-md rounded-2xl p-4 mb-3 border border-white/20 shadow-lg;
+}
+
+.profile-link {
+  @apply block group;
+}
+
+.profile-content {
+  @apply flex items-center space-x-3;
+}
+
+.profile-avatar-container {
+  @apply relative;
+}
+
+.profile-avatar {
+  @apply w-12 h-12 rounded-full ring-2 ring-blue-400/50 group-hover:ring-blue-400 transition-all duration-300;
+}
+
+.profile-status {
+  @apply absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-blue-900 animate-pulse;
+}
+
+.profile-info {
+  @apply flex-grow;
+}
+
+.profile-name {
+  @apply font-semibold text-white group-hover:text-blue-300 transition-colors duration-300 truncate;
+}
+
+.profile-role-container {
+  @apply flex items-center space-x-1 mt-1;
+}
+
+.profile-role-icon {
+  @apply text-xs;
+}
+
+.profile-role-badge {
+  @apply text-xs px-2 py-1 rounded-full text-white font-medium;
+}
+
+.profile-role-admin {
+  @apply bg-orange-500;
+}
+
+.profile-role-user {
+  @apply bg-blue-500;
+}
+
+/* Logout Button */
+.logout-button {
+  @apply w-full flex items-center space-x-3 p-4 rounded-2xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 transition-all duration-300 group backdrop-blur-md;
+}
+
+.logout-icon {
+  @apply w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300;
+}
+
+.logout-text {
+  @apply font-medium text-red-300 group-hover:text-red-200 transition-colors duration-300;
+}
+
+/* Logout Modal */
+.logout-modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.logout-modal {
+  @apply bg-white rounded-2xl p-6 m-4 max-w-sm w-full shadow-2xl animate-in zoom-in duration-300;
+}
+
+.logout-modal-content {
+  @apply text-center;
+}
+
+.logout-modal-icon {
+  @apply w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4;
+}
+
+.logout-modal-title {
+  @apply text-xl font-bold text-gray-900 mb-2;
+}
+
+.logout-modal-text {
+  @apply text-gray-600 mb-6;
+}
+
+.logout-modal-buttons {
+  @apply flex space-x-3;
+}
+
+.logout-cancel-button {
+  @apply flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-xl font-medium text-gray-700 transition-colors duration-200;
+}
+
+.logout-confirm-button {
+  @apply flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl font-medium text-white transition-all duration-200 shadow-lg;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1279px) {
+  /* Force mobile layout below xl */
+  .desktop-sidebar {
+    display: none !important;
+  }
+  
+  .mobile-header {
+    display: flex !important;
+  }
+  
+  /* Adjust main content for mobile header */
+  main {
+    padding-top: 4.5rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* Force desktop layout on xl and above */
+  .mobile-header {
+    display: none !important;
+  }
+  
+  .mobile-sidebar {
+    display: none !important;
+  }
+  
+  .desktop-sidebar {
+    display: flex !important;
+  }
+  
+  /* Reset main content padding */
+  main {
+    padding-top: 1.5rem !important;
+  }
+}
+
+/* Animation keyframes */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation: animate-in 0.2s ease-out;
+}
+
+.zoom-in {
+  animation: animate-in 0.2s ease-out;
+}

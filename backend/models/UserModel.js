@@ -13,6 +13,22 @@ const User = db.define('users', {
   email: DataTypes.STRING,
   password: DataTypes.STRING,
   role: DataTypes.STRING,
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  address: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  dateOfBirth: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  occupation: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 }, {
   freezeTableName: true,
 });
@@ -20,5 +36,5 @@ const User = db.define('users', {
 export default User;
 
 (async () => {
-  await db.sync()
+  await db.sync({ alter: true }) // alter: true akan update struktur tabel
 })();

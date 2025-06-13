@@ -72,6 +72,23 @@ export const register = async (req, res) => {
   }
 }
 
+// Get user profile
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findByPk(userId, {
+      attributes: ['userId', 'name', 'email', 'role', 'phone', 'address', 'dateOfBirth', 'occupation']
+    });
+    
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 // Tambahan untuk update profil
 export const updateProfile = async (req, res) => {
   try {
@@ -137,4 +154,3 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
-
