@@ -1,0 +1,256 @@
+/* MobileResponsive.css - Mobile First Responsive Design */
+
+/* Mobile Navigation */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.mobile-nav-overlay.active {
+  display: block;
+}
+
+.hamburger-menu {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.hamburger-menu span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #333;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+/* Mobile Layout Adjustments */
+@media (max-width: 768px) {
+  /* Show hamburger menu on mobile */
+  .hamburger-menu {
+    display: block;
+  }
+
+  /* Sidebar mobile styles */
+  .sidebar-container {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    height: 100vh;
+    transition: left 0.3s ease-in-out;
+    z-index: 999;
+  }
+
+  .sidebar-container.active {
+    left: 0;
+  }
+
+  /* Main content adjustments */
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 4rem !important;
+  }
+
+  /* Dashboard specific mobile styles */
+  .dashboard-container {
+    padding: 1rem !important;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Chart container mobile optimization */
+  .chart-container {
+    height: 300px !important;
+    overflow: hidden;
+  }
+
+  .chart-canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Table responsive */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive table {
+    min-width: 500px;
+  }
+
+  /* Form elements mobile optimization */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal adjustments */
+  .modal-content {
+    margin: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Text and spacing adjustments */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .card {
+    padding: 1rem !important;
+  }
+
+  /* Button adjustments */
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar-container {
+    position: fixed;
+    left: -100%;
+    transition: left 0.3s ease-in-out;
+    z-index: 999;
+  }
+
+  .sidebar-container.active {
+    left: 0;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 4rem !important;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+  .sidebar-container {
+    position: relative !important;
+    left: 0 !important;
+  }
+
+  .main-content {
+    margin-left: 18rem !important;
+    padding-top: 1.5rem !important;
+  }
+
+  .mobile-nav-overlay {
+    display: none !important;
+  }
+
+  /* Fix desktop overflow issues */
+  .dashboard-container {
+    max-width: calc(100vw - 20rem);
+    overflow-x: hidden;
+  }
+
+  .charts-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .chart-container {
+    height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+/* Fix for chart overflow */
+.recharts-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.recharts-surface {
+  overflow: hidden;
+}
+
+/* Utility classes for responsive design */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+}
+
+.app-container {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fix for content that might overflow */
+* {
+  max-width: 100%;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}

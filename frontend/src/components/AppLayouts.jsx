@@ -5,7 +5,7 @@ const AppLayout = ({ children }) => {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <main className="flex-grow bg-gray-50 p-6">
+      <main className="flex-grow bg-gray-50 p-6 pt-20 lg:pt-6">
         {children}
       </main>
     </div>

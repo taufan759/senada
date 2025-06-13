@@ -195,7 +195,7 @@ const Dashboard = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
           </svg>
-          <span>{result}% dibanding bulan lalu</span>
+          <span className="text-xs sm:text-sm">{result}% dibanding bulan lalu</span>
         </div>
       );
     } else if (percent < 0) {
@@ -204,11 +204,11 @@ const Dashboard = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clipRule="evenodd" />
           </svg>
-          <span>{result}% dibanding bulan lalu</span>
+          <span className="text-xs sm:text-sm">{result}% dibanding bulan lalu</span>
         </div>
       );
     } else {
-      return <span className='text-blue-500'>{result}% dibanding bulan lalu</span>;
+      return <span className='text-blue-500 text-xs sm:text-sm'>{result}% dibanding bulan lalu</span>;
     }
   }
 
@@ -224,323 +224,327 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="grid grid-cols-2">
-        <h1 className="text-3xl font-bold mb-8">Dashboard Keuangan</h1>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard Keuangan</h1>
+          <button
+            className='bg-secondary hover:bg-secondary-light text-white px-4 py-2 rounded-md font-medium transition-colors text-sm'
+            onClick={() => setAddOpen(true)}
+          >
+            + Tambah Transaksi
+          </button>
+        </div>
 
-        <button
-          className='place-self-end -translate-y-5 bg-secondary hover:bg-secondary-light text-white px-3 py-2 rounded-md font-medium transition-colors'
-          onClick={() => setAddOpen(true)}
-        >Tambah Transaksi</button>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-medium text-gray-600">Total Saldo</h3>
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-              <span className="text-white text-lg">₹</span>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-sm sm:text-lg font-medium text-gray-600">Total Saldo</h3>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                <span className="text-white text-sm sm:text-lg">₹</span>
+              </div>
+            </div>
+            <div className="mb-2">
+              <p className="text-lg sm:text-2xl font-bold">
+                {formatCurrency(
+                  transactions.reduce((total, t) => {
+                    if (t.type === 'Income') return total + Number(t.amount);
+                    if (t.type === 'Expense') return total - Number(t.amount);
+                    return total;
+                  }, 0)
+                )}
+              </p>
             </div>
           </div>
-          <div className="mb-2">
-            <p className="text-2xl font-bold">
-              {formatCurrency(
-                transactions.reduce((total, t) => {
-                  if (t.type === 'Income') return total + Number(t.amount);
-                  if (t.type === 'Expense') return total - Number(t.amount);
-                  return total;
-                }, 0)
-              )}
-            </p>
+
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-sm sm:text-lg font-medium text-gray-600">Pemasukan Bulan Ini</h3>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500 flex items-center justify-center">
+                <span className="text-white text-sm sm:text-lg">₹</span>
+              </div>
+            </div>
+            <div className="mb-2">
+              <p className="text-lg sm:text-2xl font-bold">
+                {formatCurrency(
+                  transactions
+                    .filter((t) => {
+                      const now = new Date();
+                      const tDate = new Date(t.date.split('/').reverse().join('-'));
+                      return (
+                        t.type === 'Income' &&
+                        tDate.getMonth() === now.getMonth() &&
+                        tDate.getFullYear() === now.getFullYear()
+                      );
+                    })
+                    .reduce((sum, t) => sum + Number(t.amount), 0)
+                )}
+              </p>
+            </div>
+            {cashFlowThisMonth('Income')}
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-sm sm:text-lg font-medium text-gray-600">Pengeluaran Bulan Ini</h3>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-500 flex items-center justify-center">
+                <span className="text-white text-sm sm:text-lg">₹</span>
+              </div>
+            </div>
+            <div className="mb-2">
+              <p className="text-lg sm:text-2xl font-bold">
+                {formatCurrency(
+                  transactions
+                    .filter((t) => {
+                      const now = new Date();
+                      const tDate = new Date(t.date.split('/').reverse().join('-'));
+                      return (
+                        t.type === 'Expense' &&
+                        tDate.getMonth() === now.getMonth() &&
+                        tDate.getFullYear() === now.getFullYear()
+                      );
+                    })
+                    .reduce((sum, t) => sum + Number(t.amount), 0)
+                )}
+              </p>
+            </div>
+            {cashFlowThisMonth('Expense')}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-medium text-gray-600">Pemasukan Bulan Ini</h3>
-            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-              <span className="text-white text-lg">₹</span>
-            </div>
-          </div>
-          <div className="mb-2">
-            <p className="text-2xl font-bold">
-              {formatCurrency(
-                transactions
-                  .filter((t) => {
-                    const now = new Date();
-                    const tDate = new Date(t.date.split('/').reverse().join('-'));
-                    return (
-                      t.type === 'Income' &&
-                      tDate.getMonth() === now.getMonth() &&
-                      tDate.getFullYear() === now.getFullYear()
-                    );
-                  })
-                  .reduce((sum, t) => sum + Number(t.amount), 0)
-              )}
-            </p>
-          </div>
-          {cashFlowThisMonth('Income')}
-        </div>
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">Pemasukan &amp; Pengeluaran</h2>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-medium text-gray-600">Pengeluaran Bulan Ini</h3>
-            <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
-              <span className="text-white text-lg">₹</span>
-            </div>
-          </div>
-          <div className="mb-2">
-            <p className="text-2xl font-bold">
-              {formatCurrency(
-                transactions
-                  .filter((t) => {
-                    const now = new Date();
-                    const tDate = new Date(t.date.split('/').reverse().join('-'));
-                    return (
-                      t.type === 'Expense' &&
-                      tDate.getMonth() === now.getMonth() &&
-                      tDate.getFullYear() === now.getFullYear()
-                    );
-                  })
-                  .reduce((sum, t) => sum + Number(t.amount), 0)
-              )}
-            </p>
-          </div>
-          {cashFlowThisMonth('Expense')}
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">Pemasukan &amp; Pengeluaran</h2>
-
-          {/* Simple bar chart visualization */}
-          <div className="h-64">
-            <div className="flex h-full items-end space-x-2">
-              {monthlyData.map((data, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div className="w-full flex flex-col-reverse space-y-reverse space-y-1">
-                    <div
-                      className="w-full bg-secondary rounded-t"
-                      style={{ height: `${(data.expense / 3000000) * 100}%` }}
-                      title={`Pengeluaran: ${formatCurrency(data.expense)}`}
-                    ></div>
-                    <div
-                      className="w-full bg-primary rounded-t"
-                      style={{ height: `${(data.income / 3000000) * 100}%` }}
-                      title={`Pemasukan: ${formatCurrency(data.income)}`}
-                    ></div>
+            {/* Simple bar chart visualization */}
+            <div className="h-48 sm:h-64">
+              <div className="flex h-full items-end space-x-1 sm:space-x-2">
+                {monthlyData.map((data, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center">
+                    <div className="w-full flex flex-col-reverse space-y-reverse space-y-1">
+                      <div
+                        className="w-full bg-secondary rounded-t"
+                        style={{ height: `${(data.expense / 3000000) * 100}%` }}
+                        title={`Pengeluaran: ${formatCurrency(data.expense)}`}
+                      ></div>
+                      <div
+                        className="w-full bg-primary rounded-t"
+                        style={{ height: `${(data.income / 3000000) * 100}%` }}
+                        title={`Pemasukan: ${formatCurrency(data.income)}`}
+                      ></div>
+                    </div>
+                    <span className="text-xs mt-2">{data.month}</span>
                   </div>
-                  <span className="text-xs mt-2">{data.month}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-4 space-x-4 sm:space-x-6">
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-primary rounded-full mr-2"></div>
+                <span className="text-xs sm:text-sm">Pemasukan</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-secondary rounded-full mr-2"></div>
+                <span className="text-xs sm:text-sm">Pengeluaran</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">Kategori Pengeluaran</h2>
+
+            {/* Simple donut chart visualization */}
+            <div className="flex justify-center">
+              <div className="relative w-40 h-40 sm:w-52 sm:h-52">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  {categoryData.reduce((acc, category, i) => {
+                    const prevTotal = acc.total;
+                    const newTotal = prevTotal + category.percentage;
+
+                    // Create a donut slice
+                    const startAngle = prevTotal * 3.6; // 3.6 degrees per percentage point
+                    const endAngle = newTotal * 3.6;
+
+                    // Convert angles to radians
+                    const startRad = (startAngle - 90) * Math.PI / 180;
+                    const endRad = (endAngle - 90) * Math.PI / 180;
+
+                    // Calculate points
+                    const x1 = 50 + 40 * Math.cos(startRad);
+                    const y1 = 50 + 40 * Math.sin(startRad);
+                    const x2 = 50 + 40 * Math.cos(endRad);
+                    const y2 = 50 + 40 * Math.sin(endRad);
+
+                    // Create the arc
+                    const largeArcFlag = category.percentage > 50 ? 1 : 0;
+
+                    const pathData = `
+                      M 50 50
+                      L ${x1} ${y1}
+                      A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2}
+                      Z
+                    `;
+
+                    acc.paths.push(
+                      <path
+                        key={i}
+                        d={pathData}
+                        fill={category.color}
+                        stroke="#fff"
+                        strokeWidth="1"
+                      />
+                    );
+
+                    return { paths: acc.paths, total: newTotal };
+                  }, { paths: [], total: 0 }).paths}
+
+                  {/* Inner circle to create donut */}
+                  <circle cx="50" cy="50" r="25" fill="white" />
+                </svg>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+              {categoryData.slice(0, 4).map((category, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: category.color }}></div>
+                  <span className="text-xs sm:text-sm truncate">{category.name} ({category.percentage}%)</span>
                 </div>
               ))}
             </div>
           </div>
-
-          <div className="flex justify-center mt-4 space-x-6">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-primary rounded-full mr-2"></div>
-              <span className="text-sm">Pemasukan</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-secondary rounded-full mr-2"></div>
-              <span className="text-sm">Pengeluaran</span>
-            </div>
-          </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">Kategori Pengeluaran</h2>
+        {/* Recent Transactions */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">Transaksi Terbaru</h2>
 
-          {/* Simple donut chart visualization */}
-          <div className="flex justify-center">
-            <div className="relative w-52 h-52">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                {categoryData.reduce((acc, category, i) => {
-                  const prevTotal = acc.total;
-                  const newTotal = prevTotal + category.percentage;
-
-                  // Create a donut slice
-                  const startAngle = prevTotal * 3.6; // 3.6 degrees per percentage point
-                  const endAngle = newTotal * 3.6;
-
-                  // Convert angles to radians
-                  const startRad = (startAngle - 90) * Math.PI / 180;
-                  const endRad = (endAngle - 90) * Math.PI / 180;
-
-                  // Calculate points
-                  const x1 = 50 + 40 * Math.cos(startRad);
-                  const y1 = 50 + 40 * Math.sin(startRad);
-                  const x2 = 50 + 40 * Math.cos(endRad);
-                  const y2 = 50 + 40 * Math.sin(endRad);
-
-                  // Create the arc
-                  const largeArcFlag = category.percentage > 50 ? 1 : 0;
-
-                  const pathData = `
-                    M 50 50
-                    L ${x1} ${y1}
-                    A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2}
-                    Z
-                  `;
-
-                  acc.paths.push(
-                    <path
-                      key={i}
-                      d={pathData}
-                      fill={category.color}
-                      stroke="#fff"
-                      strokeWidth="1"
-                    />
-                  );
-
-                  return { paths: acc.paths, total: newTotal };
-                }, { paths: [], total: 0 }).paths}
-
-                {/* Inner circle to create donut */}
-                <circle cx="50" cy="50" r="25" fill="white" />
-              </svg>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {categoryData.map((category, index) => (
-              <div key={index} className="flex items-center">
-                <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: category.color }}></div>
-                <span className="text-sm">{category.name} Rp. {formatCurrency(category.amount)} ({category.percentage}%)</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Transactions */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold mb-4">Transaksi Terbaru</h2>
-
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead>
-              <tr className="bg-gray-100 text-gray-600 text-sm leading-normal">
-                <th className="py-3 px-6 text-left">Tanggal</th>
-                <th className="py-3 px-6 text-left">Deskripsi</th>
-                <th className="py-3 px-6 text-left">Kategori</th>
-                <th className="py-3 px-6 text-right">Jumlah</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-600 text-sm">
-              {/* tampilkan maksimal 5 data */}
-              {transactions.slice(0, 5).map((transaction, idx) => (
-                <tr key={transaction.transactionId || idx} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-3 px-6 text-left">{transaction.date}</td>
-                  <td className="py-3 px-6 text-left">{transaction.description}</td>
-                  <td className="py-3 px-6 text-left">{transaction.category}</td>
-                  <td className={`py-3 px-6 text-right ${transaction.type === 'Income' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                    {
-                      transaction.type === 'Income' ? formatCurrency(transaction.amount) : '-' + formatCurrency(transaction.amount)
-                    }
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white text-sm">
+              <thead>
+                <tr className="bg-gray-100 text-gray-600 text-xs sm:text-sm leading-normal">
+                  <th className="py-2 sm:py-3 px-3 sm:px-6 text-left">Tanggal</th>
+                  <th className="py-2 sm:py-3 px-3 sm:px-6 text-left">Deskripsi</th>
+                  <th className="py-2 sm:py-3 px-3 sm:px-6 text-left">Kategori</th>
+                  <th className="py-2 sm:py-3 px-3 sm:px-6 text-right">Jumlah</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-gray-600 text-xs sm:text-sm">
+                {/* tampilkan maksimal 5 data */}
+                {transactions.slice(0, 5).map((transaction, idx) => (
+                  <tr key={transaction.transactionId || idx} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="py-2 sm:py-3 px-3 sm:px-6 text-left">{transaction.date}</td>
+                    <td className="py-2 sm:py-3 px-3 sm:px-6 text-left truncate max-w-32">{transaction.description}</td>
+                    <td className="py-2 sm:py-3 px-3 sm:px-6 text-left">{transaction.category}</td>
+                    <td className={`py-2 sm:py-3 px-3 sm:px-6 text-right ${transaction.type === 'Income' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                      {
+                        transaction.type === 'Income' ? formatCurrency(transaction.amount) : '-' + formatCurrency(transaction.amount)
+                      }
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link to="/transactions" className="text-primary hover:underline text-sm">Lihat Semua Transaksi</Link>
+          </div>
         </div>
 
-        <div className="mt-4 text-center">
-          <Link to="/transactions" className="text-primary hover:underline">Lihat Semua Transaksi</Link>
-        </div>
+        {/* Add Transaction Modal */}
+        <Modal open={addOpen} setOpen={setAddOpen}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label htmlFor="type" className="block text-sm/6 font-medium text-gray-900">
+                  Type
+                </label>
+                <SelectInput name="type" value={type} autoComplete="type-name" onChange={(e) => setType(e.target.value)}>
+                  <option value="">Pilih Type</option>
+                  <option value="Income">💰Income</option>
+                  <option value="Expense">💸Expense</option>
+                </SelectInput>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label htmlFor="category" className="block text-sm/6 font-medium text-gray-900">
+                  Category
+                </label>
+                <SelectInput name="category" value={category} autoComplete="category-name" onChange={(e) => setCategory(e.target.value)}>
+                  <option value="">Pilih Category</option>
+                  <option value="Gaji">💰Gaji</option>
+                  <option value="Bonus">🪙Bonus</option>
+                  <option value="Dividen">💹Dividen</option>
+                  <option value="Listrik">💡Listrik</option>
+                  <option value="Uang Saku">💵Uang Saku</option>
+                  <option value="Makan">🍔Makan</option>
+                  <option value="Pakaian">👕Pakaian</option>
+                  <option value="Pendidikan">🎓Pendidikan</option>
+                  <option value="Peliharaan">🐶Peliharaan</option>
+                  <option value="Hiburan">🎥Hiburan</option>
+                  <option value="Kebugaran">🏃Kebugaran</option>
+                  <option value="Hadiah">🎁Hadiah</option>
+                  <option value="Transportasi">🚗Transportasi</option>
+                  <option value="Penginapan">🏨Penginapan</option>
+                  <option value="Kesehatan">🏥Kesehatan</option>
+                  <option value="Utilitas">🔌Utilitas</option>
+                  <option value="Lainnya">💬Lainnya</option>
+                </SelectInput>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label htmlFor="date" className="block text-sm/6 font-medium text-gray-900">
+                  Date
+                </label>
+                <InputDate name="date" onChange={(e) => setDate(e.target.value)} />
+              </div>
+
+              <div className="sm:col-span-3">
+                <label htmlFor="amount" className="block text-sm/6 font-medium text-gray-900">
+                  Amount
+                </label>
+                <InputNumber name="amount" onChange={(e) => setAmount(e.target.value)} placeHolder="0.00" />
+              </div>
+
+              <div className="sm:col-span-6">
+                <label htmlFor="transaction" className="block text-sm/6 font-medium text-gray-900">
+                  Transaction Name
+                </label>
+                <InputText name="transaction" onChange={(e) => setTransactionName(e.target.value)} placeHolder="Masukkan Nama Transaksi" />
+              </div>
+
+              <div className="sm:col-span-6">
+                <label htmlFor="note" className="block text-sm/6 font-medium text-gray-900">
+                  Desciption
+                </label>
+                <TextArea name="note" onChange={(e) => setDescription(e.target.value)} placeHolder="Tambahkan catatan jika perlu" />
+              </div>
+            </div>
+
+            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button
+                type="submit"
+                className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                data-autofocus
+                onClick={() => setAddOpen(false)}
+                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
       </div>
-
-      {/* Add Transaction Modal */}
-      <Modal open={addOpen} setOpen={setAddOpen}>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <label htmlFor="type" className="block text-sm/6 font-medium text-gray-900">
-                Type
-              </label>
-              <SelectInput name="type" value={type} autoComplete="type-name" onChange={(e) => setType(e.target.value)}>
-                <option value="">Pilih Type</option>
-                <option value="Income">💰Income</option>
-                <option value="Expense">💸Expense</option>
-              </SelectInput>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="category" className="block text-sm/6 font-medium text-gray-900">
-                Category
-              </label>
-              <SelectInput name="category" value={category} autoComplete="category-name" onChange={(e) => setCategory(e.target.value)}>
-                <option value="">Pilih Category</option>
-                <option value="Gaji">💰Gaji</option>
-                <option value="Bonus">🪙Bonus</option>
-                <option value="Dividen">💹Dividen</option>
-                <option value="Listrik">💡Listrik</option>
-                <option value="Uang Saku">💵Uang Saku</option>
-                <option value="Makan">🍔Makan</option>
-                <option value="Pakaian">👕Pakaian</option>
-                <option value="Pendidikan">🎓Pendidikan</option>
-                <option value="Peliharaan">🐶Peliharaan</option>
-                <option value="Hiburan">🎥Hiburan</option>
-                <option value="Kebugaran">🏃Kebugaran</option>
-                <option value="Hadiah">🎁Hadiah</option>
-                <option value="Transportasi">🚗Transportasi</option>
-                <option value="Penginapan">🏨Penginapan</option>
-                <option value="Kesehatan">🏥Kesehatan</option>
-                <option value="Utilitas">🔌Utilitas</option>
-                <option value="Lainnya">💬Lainnya</option>
-              </SelectInput>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="date" className="block text-sm/6 font-medium text-gray-900">
-                Date
-              </label>
-              <InputDate name="date" onChange={(e) => setDate(e.target.value)} />
-            </div>
-
-            <div className="sm:col-span-3">
-              <label htmlFor="amount" className="block text-sm/6 font-medium text-gray-900">
-                Amount
-              </label>
-              <InputNumber name="amount" onChange={(e) => setAmount(e.target.value)} placeHolder="0.00" />
-            </div>
-
-            <div className="sm:col-span-6">
-              <label htmlFor="transaction" className="block text-sm/6 font-medium text-gray-900">
-                Transaction Name
-              </label>
-              <InputText name="transaction" onChange={(e) => setTransactionName(e.target.value)} placeHolder="Masukkan Nama Transaksi" />
-            </div>
-
-            <div className="sm:col-span-6">
-              <label htmlFor="note" className="block text-sm/6 font-medium text-gray-900">
-                Desciption
-              </label>
-              <TextArea name="note" onChange={(e) => setDescription(e.target.value)} placeHolder="Tambahkan catatan jika perlu" />
-            </div>
-          </div>
-
-          <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-            <button
-              type="submit"
-              className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              data-autofocus
-              onClick={() => setAddOpen(false)}
-              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </Modal>
     </AppLayout>
   );
 };

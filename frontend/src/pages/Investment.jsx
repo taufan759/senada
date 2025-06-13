@@ -8,10 +8,10 @@ import InputRadio from '../components/Element/InputRadio';
 import AppSettings from '../AppSettings';
 
 const Investment = () => {
-  const [riskProfile, setRiskProfile] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [layerQuiz, setLayerQuiz] = useState(0);
 
+  // Quiz states
   const [tujuan, setTujuan] = useState('');
   const [usia, setUsia] = useState('');
   const [pendapatan, setPendapatan] = useState('');
@@ -49,14 +49,8 @@ const Investment = () => {
     getRecommend();
   }, []);
 
-  const handleStartQuiz = () => {
-    setShowQuiz(true);
-    setLayerQuiz(1);
-  };
-
   const getRecommend = async () => {
     try {
-      // ambil data transaksi dari API
       const response = await fetch(`${AppSettings.api}/recommend`, {
         method: 'GET',
         headers: {
@@ -77,6 +71,11 @@ const Investment = () => {
     }
   }
 
+  const handleStartQuiz = () => {
+    setShowQuiz(true);
+    setLayerQuiz(1);
+  };
+
   const handleCompleteQuiz = async (e) => {
     e.preventDefault();
 
@@ -86,7 +85,6 @@ const Investment = () => {
       profileResiko = 'Konservatif';
     } else if (profileResiko >= 6 && profileResiko <= 10) {
       profileResiko = 'Moderat';
-
     } else if (profileResiko >= 11 && profileResiko <= 15) {
       profileResiko = 'Agresif';
     }
@@ -109,8 +107,7 @@ const Investment = () => {
       });
 
       const data = await response.json();
-      setRiskProfile(true);
-      // Memasukkan hasil ML ke Database
+      
       fetch(`${AppSettings.api}/recommend/add`, {
         method: 'POST',
         headers: {
@@ -120,463 +117,726 @@ const Investment = () => {
         body: JSON.stringify({ ...data, profile_risiko: profileResiko })
       })
 
+      setRecommend([{ ...data, profile_risiko: profileResiko }]);
+      setShowQuiz(false);
+      setLayerQuiz(0);
+
     } catch (error) {
       console.error('Error:', error);
     }
-
-    // setRiskProfile(false);
-    // setShowQuiz(false);
-    // window.location.reload();
   };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  // Kategori investasi yang diupdate - lebih modern dan trending
+  const getInvestmentCategories = () => {
+    if (!recommend || recommend.length === 0) {
+      // Kategori umum jika belum ada profil risiko
+      return [
+        {
+          name: 'Bitcoin & Crypto',
+          description: 'Aset digital dengan potensi return tinggi namun volatil',
+          icon: '₿',
+          gradient: 'from-orange-500 to-yellow-500',
+          riskLevel: 'Tinggi',
+          minInvestment: 'Rp 50.000',
+          platform: 'Indodax, Pintu, Tokocrypto',
+          trending: true,
+          links: [
+            { name: 'Indodax', url: 'https://indodax.com/' },
+            { name: 'Pintu', url: 'https://pintu.co.id/' },
+            { name: 'Tokocrypto', url: 'https://tokocrypto.com/' }
+          ]
+        },
+        {
+          name: 'Reksa Dana Index',
+          description: 'Investasi pasif mengikuti indeks dengan biaya rendah',
+          icon: '📊',
+          gradient: 'from-blue-500 to-cyan-500',
+          riskLevel: 'Menengah',
+          minInvestment: 'Rp 10.000',
+          platform: 'Bibit, Bareksa, Ajaib',
+          popular: true,
+          links: [
+            { name: 'Bibit', url: 'https://bibit.id/' },
+            { name: 'Bareksa', url: 'https://www.bareksa.com/' },
+            { name: 'Ajaib', url: 'https://ajaib.co.id/' }
+          ]
+        },
+        {
+          name: 'P2P Lending',
+          description: 'Pinjam meminjam dengan return 10-18% per tahun',
+          icon: '🤝',
+          gradient: 'from-green-500 to-emerald-500',
+          riskLevel: 'Menengah-Tinggi',
+          minInvestment: 'Rp 100.000',
+          platform: 'Investree, Modalku, Akseleran',
+          featured: true,
+          links: [
+            { name: 'Investree', url: 'https://www.investree.id/' },
+            { name: 'Modalku', url: 'https://modalku.co.id/' },
+            { name: 'Akseleran', url: 'https://www.akseleran.co.id/' }
+          ]
+        },
+        {
+          name: 'Robo Advisor',
+          description: 'Investasi otomatis berbasis AI dan algoritma',
+          icon: '🤖',
+          gradient: 'from-purple-500 to-pink-500',
+          riskLevel: 'Menengah',
+          minInvestment: 'Rp 100.000',
+          platform: 'Ajaib Robo, Bibit Robo, TMRW',
+          modern: true,
+          links: [
+            { name: 'Ajaib Robo', url: 'https://ajaib.co.id/robo-advisor' },
+            { name: 'Bibit', url: 'https://bibit.id/' },
+            { name: 'TMRW by UOB', url: 'https://www.tmrwbankid.com/' }
+          ]
+        },
+        {
+          name: 'Saham Blue Chip',
+          description: 'Saham perusahaan besar dengan fundamental kuat',
+          icon: '🏢',
+          gradient: 'from-indigo-500 to-blue-600',
+          riskLevel: 'Menengah',
+          minInvestment: 'Rp 100.000',
+          platform: 'Stockbit, Ajaib, IPOT',
+          stable: true,
+          links: [
+            { name: 'Stockbit', url: 'https://stockbit.com/' },
+            { name: 'Ajaib', url: 'https://ajaib.co.id/' },
+            { name: 'IPOT', url: 'https://www.indopremier.com/' }
+          ]
+        },
+        {
+          name: 'SBN & Sukuk Retail',
+          description: 'Obligasi pemerintah dengan risiko rendah dan return stabil',
+          icon: '🏛️',
+          gradient: 'from-teal-500 to-cyan-600',
+          riskLevel: 'Rendah',
+          minInvestment: 'Rp 1.000.000',
+          platform: 'e-SBN, Bareksa, BNI Sekuritas',
+          safe: true,
+          links: [
+            { name: 'e-SBN Kemenkeu', url: 'https://www.kemenkeu.go.id/sbn' },
+            { name: 'Bareksa', url: 'https://www.bareksa.com/' },
+            { name: 'BNI Sekuritas', url: 'https://www.bnisekuritas.co.id/' }
+          ]
+        }
+      ];
+    }
+
+    // Filter kategori berdasarkan profil risiko
+    const userRiskProfile = recommend[0]?.profile_risiko || 'Moderat';
+    const allCategories = [
+      {
+        name: 'Bitcoin & Crypto',
+        description: 'Aset digital dengan potensi return tinggi namun volatil',
+        icon: '₿',
+        gradient: 'from-orange-500 to-yellow-500',
+        riskLevel: 'Tinggi',
+        suitableFor: ['Agresif'],
+        minInvestment: 'Rp 50.000',
+        platform: 'Indodax, Pintu, Tokocrypto',
+        trending: true,
+        links: [
+          { name: 'Indodax', url: 'https://indodax.com/' },
+          { name: 'Pintu', url: 'https://pintu.co.id/' }
+        ]
+      },
+      {
+        name: 'Reksa Dana Index',
+        description: 'Investasi pasif mengikuti indeks dengan biaya rendah',
+        icon: '📊',
+        gradient: 'from-blue-500 to-cyan-500',
+        riskLevel: 'Menengah',
+        suitableFor: ['Konservatif', 'Moderat', 'Agresif'],
+        minInvestment: 'Rp 10.000',
+        platform: 'Bibit, Bareksa, Ajaib',
+        popular: true,
+        links: [
+          { name: 'Bibit', url: 'https://bibit.id/' },
+          { name: 'Bareksa', url: 'https://www.bareksa.com/' }
+        ]
+      },
+      {
+        name: 'P2P Lending',
+        description: 'Pinjam meminjam dengan return 10-18% per tahun',
+        icon: '🤝',
+        gradient: 'from-green-500 to-emerald-500',
+        riskLevel: 'Menengah-Tinggi',
+        suitableFor: ['Moderat', 'Agresif'],
+        minInvestment: 'Rp 100.000',
+        platform: 'Investree, Modalku, Akseleran',
+        featured: true,
+        links: [
+          { name: 'Investree', url: 'https://www.investree.id/' },
+          { name: 'Modalku', url: 'https://modalku.co.id/' }
+        ]
+      },
+      {
+        name: 'Robo Advisor',
+        description: 'Investasi otomatis berbasis AI dan algoritma',
+        icon: '🤖',
+        gradient: 'from-purple-500 to-pink-500',
+        riskLevel: 'Menengah',
+        suitableFor: ['Konservatif', 'Moderat', 'Agresif'],
+        minInvestment: 'Rp 100.000',
+        platform: 'Ajaib Robo, Bibit Robo',
+        modern: true,
+        links: [
+          { name: 'Ajaib Robo', url: 'https://ajaib.co.id/robo-advisor' },
+          { name: 'Bibit', url: 'https://bibit.id/' }
+        ]
+      },
+      {
+        name: 'Saham Growth',
+        description: 'Saham perusahaan teknologi dengan pertumbuhan tinggi',
+        icon: '🚀',
+        gradient: 'from-indigo-500 to-purple-600',
+        riskLevel: 'Tinggi',
+        suitableFor: ['Agresif'],
+        minInvestment: 'Rp 100.000',
+        platform: 'Stockbit, Ajaib',
+        growth: true,
+        links: [
+          { name: 'Stockbit', url: 'https://stockbit.com/' },
+          { name: 'Ajaib', url: 'https://ajaib.co.id/' }
+        ]
+      },
+      {
+        name: 'SBN & Sukuk Retail',
+        description: 'Obligasi pemerintah dengan risiko rendah dan return stabil',
+        icon: '🏛️',
+        gradient: 'from-teal-500 to-cyan-600',
+        riskLevel: 'Rendah',
+        suitableFor: ['Konservatif', 'Moderat'],
+        minInvestment: 'Rp 1.000.000',
+        platform: 'e-SBN, Bareksa',
+        safe: true,
+        links: [
+          { name: 'e-SBN Kemenkeu', url: 'https://www.kemenkeu.go.id/sbn' },
+          { name: 'Bareksa', url: 'https://www.bareksa.com/' }
+        ]
+      }
+    ];
+
+    return allCategories.filter(category => 
+      category.suitableFor.includes(userRiskProfile)
+    );
+  };
+
+  const investmentCategories = getInvestmentCategories();
+
   return (
     <AppLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-4">Portfolio Investasi</h1>
-
-          {/* Investment Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-600 mb-1">Total Investasi</h3>
-              <p className="text-xl font-bold text-blue-600">Rp 0</p>
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg p-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">🎯 Smart Investment Hub</h1>
+              <p className="text-blue-100">Investasi cerdas berdasarkan profil risiko Anda</p>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-600 mb-1">Keuntungan</h3>
-              <p className="text-xl font-bold text-green-600">Rp 0</p>
-            </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-600 mb-1">Return</h3>
-              <p className="text-xl font-bold text-purple-600">0%</p>
-            </div>
+            <div className="text-6xl opacity-20">💰</div>
           </div>
         </div>
+
         {!showQuiz ? (
           <>
-            {/* Risk Profile */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4">Profil Risiko</h2>
-              {!recommend ? (
-                <>
-                  <p className="text-gray-600 mb-4">Tentukan profil risiko Anda untuk mendapatkan rekomendasi investasi yang sesuai</p>
-                  <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors"
-                    onClick={handleStartQuiz}>
-                    Mulai Assessment
+            {/* Risk Profile Section */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Profil Risiko Investasi</h2>
+              </div>
+
+              {!recommend || recommend.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-4xl">🤔</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Belum Ada Profil Risiko</h3>
+                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                    Yuk, kenali profil risiko investasi kamu dulu! Dengan begini, kami bisa kasih rekomendasi investasi yang pas banget buat kamu.
+                  </p>
+                  <button 
+                    onClick={handleStartQuiz}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    🚀 Mulai Assessment Risiko
                   </button>
-                </>
+                </div>
               ) : (
-                <>
-                  <p className="text-gray-600 mb-4">Berikut Profile risiko anda:</p>
-                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-
-                    {/* Recommendation Section */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-20 h-20 rounded-lg flex items-center justify-center">
-                          <span className="text-6xl">🎯</span>
-                        </div>
-                        <h2 className="text-xl font-semibold text-gray-900">Rekomendasi Investasi</h2>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
+                      <div className="text-3xl font-bold text-blue-600 mb-2">
+                        {recommend[0]?.profile_risiko || 'Moderat'}
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600 mb-1">{recommend ? recommend.length : 0}</div>
-                          <div className="text-sm text-gray-600">Produk Cocok</div>
-                        </div>
-                        <div className="text-center p-4 bg-green-50 rounded-lg">
-                          <div className="text-2xl font-bold text-green-600 mb-1">
-                            {recommend && recommend.length > 0
-                              ? (
-                                (recommend.reduce((acc, rec) => acc + (parseFloat(rec.skor_kecocokan) || 0), 0) / recommend.length * 100)
-                                  .toFixed(2)
-                              )
-                              : 0
-                            }%
-                          </div>
-                          <div className="text-sm text-gray-600">Rata-rata Match</div>
-                        </div>
-                        <div className="text-center p-4 bg-orange-50 rounded-lg">
-                          <div className="text-2xl font-bold text-orange-600 mb-1">
-                            {recommend && recommend.length > 0 ? recommend[0].profile_risiko : '-'}
-                          </div>
-                          <div className="text-sm text-gray-600">Profil Risiko</div>
-                        </div>
-                      </div>
+                      <div className="text-sm text-gray-600">Profil Risiko Anda</div>
                     </div>
-                    {/* Investment Cards Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                      {recommend.map((rec) => (
-                        <div
-                          key={rec.id}
-                          className={`rounded-xl p-6 shadow-sm border border-gray-200 bg-blue-50 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer
-                            }`}
-                        >
-                          {/* Card Header */}
-                          <div className="flex items-start justify-between mb-4">
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                                {rec.nama_produk}
-                              </h3>
+                    <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+                      <div className="text-3xl font-bold text-green-600 mb-2">
+                        {recommend?.length || 0}
+                      </div>
+                      <div className="text-sm text-gray-600">Rekomendasi Tersedia</div>
+                    </div>
+                    <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
+                      <div className="text-3xl font-bold text-purple-600 mb-2">
+                        {investmentCategories.length}
+                      </div>
+                      <div className="text-sm text-gray-600">Kategori Cocok</div>
+                    </div>
+                  </div>
 
-                              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                Jenis: {rec.jenis_produk}
-                              </p>
-                            </div>
-
-                            <div className="text-right">
-                              <div className="text-sm text-gray-500 mb-1">Skor Kecocokan</div>
-                              <div className="inline-block bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-                                {(rec.skor_kecocokan * 100).toFixed(2)}%
+                  {/* Rekomendasi Produk */}
+                  {recommend && recommend.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 Rekomendasi Khusus Untuk Anda</h3>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {recommend.map((rec, index) => (
+                          <div
+                            key={index}
+                            className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-blue-50 to-indigo-50"
+                          >
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                                  {rec.nama_produk}
+                                </h4>
+                                <p className="text-sm text-gray-600 mb-2">
+                                  {rec.jenis_produk}
+                                </p>
+                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium
+                                  ${rec.tingkat_risiko === 'Rendah' ? 'bg-green-100 text-green-800' :
+                                    rec.tingkat_risiko === 'Menengah' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'}`}>
+                                  Risiko: {rec.tingkat_risiko}
+                                </span>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-gray-500 mb-1">Match Score</div>
+                                <div className="text-xl font-bold text-blue-600">
+                                  {(rec.skor_kecocokan * 100).toFixed(0)}%
+                                </div>
                               </div>
                             </div>
                           </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
+                  <div className="text-center">
+                    <button 
+                      onClick={handleStartQuiz}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      🔄 Ulang Assessment
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
-                          {/* Risk Level and CTA */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">Risiko:</span>
-                              <span className={`bg-red-500 text-white px-2 py-1 rounded text-xs font-medium`}>
-                                {rec.tingkat_risiko}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+            {/* Investment Categories */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {recommend && recommend.length > 0 
+                      ? `Kategori Investasi untuk Profil ${recommend[0]?.profile_risiko}`
+                      : 'Jelajahi Kategori Investasi Trending'
+                    }
+                  </h2>
+                  <p className="text-gray-600">Platform terpercaya untuk mulai investasi</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {investmentCategories.map((category, index) => (
+                  <div key={index} className="group border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+                    {/* Background decoration */}
+                    <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${category.gradient} opacity-10 rounded-full transform translate-x-6 -translate-y-6`}></div>
+                    
+                    {/* Badges */}
+                    <div className="absolute top-4 right-4 flex flex-col gap-1">
+                      {category.trending && (
+                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                          🔥 TRENDING
+                        </span>
+                      )}
+                      {category.popular && (
+                        <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          ⭐ POPULAR
+                        </span>
+                      )}
+                      {category.modern && (
+                        <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          🤖 AI-POWERED
+                        </span>
+                      )}
+                      {category.safe && (
+                        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          🛡️ AMAN
+                        </span>
+                      )}
                     </div>
 
-                    {/* {recommend && Array.isArray(recommend) && recommend.length > 0 ? (
-                      recommend.map((rec, idx) => (
-                        <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-blue-50">
-                          <h3 className="font-semibold text-lg mb-2">{rec.nama_produk || 'Rekomendasi Investasi'}</h3>
-                          <p className="text-sm text-gray-700 mb-2">{rec.deskripsi || rec.keterangan || 'Produk investasi yang sesuai dengan profil risiko Anda.'}</p>
-                          <div className="flex gap-5">
-                            {rec.skor_kecocokan && (
-                              <span className="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded mb-2">
-                                Skor Kecocokan: {rec.skor_kecocokan * 100 + '%'}
-                              </span>
-                            )}
-                            {rec.tingkat_risiko && (
-                              <div className="inline-block bg-red-700 text-white text-xs px-2 py-1 rounded mb-2">Risiko: {rec.tingkat_risiko}</div>
-                            )}
-                          </div>
-                          <button className="text-primary hover:underline text-sm mt-2">Pelajari Lebih Lanjut →</button>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${category.gradient} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                          {category.icon}
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-gray-500">Belum ada rekomendasi investasi.</div>
-                    )} */}
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            {category.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {category.riskLevel}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                        {category.description}
+                      </p>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Min. Investasi:</span>
+                          <span className="font-medium">{category.minInvestment}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Platform:</span>
+                          <span className="font-medium text-right">{category.platform}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-gray-700">Platform Terpercaya:</p>
+                        {category.links.map((link, linkIndex) => (
+                          <a
+                            key={linkIndex}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-blue-600 hover:text-blue-800 text-sm hover:underline transition-colors duration-200 flex items-center gap-2 group/link"
+                          >
+                            <span className="group-hover/link:scale-110 transition-transform">🔗</span>
+                            {link.name}
+                            <span className="text-xs opacity-60 group-hover/link:opacity-100">↗</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors"
-                    onClick={handleStartQuiz}>
-                    Ulang Assessment
+                ))}
+              </div>
+
+              {/* CTA Section */}
+              <div className="mt-8 text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">🎯 Siap Mulai Investasi?</h3>
+                <p className="text-gray-600 mb-4">
+                  Ingat, diversifikasi adalah kunci! Jangan taruh semua telur di satu keranjang.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <button 
+                    onClick={() => window.open('https://www.instagram.com/ojk.id/', '_blank')}
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
+                  >
+                    📚 Belajar di OJK
                   </button>
-                </>
-              )}
+                  <button 
+                    onClick={() => window.open('https://sikapiuangmu.ojk.go.id/', '_blank')}
+                    className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
+                  >
+                    💡 Tips Investasi
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold mb-4">Profil Risiko</h2>
+          /* Quiz Section */
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">🧠</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Assessment Profil Risiko</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex space-x-1">
+                    {[1,2,3,4,5].map((step) => (
+                      <div 
+                        key={step}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          step <= layerQuiz ? 'bg-purple-500' : 'bg-gray-300'
+                        }`}
+                      ></div>
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-500">Langkah {layerQuiz} dari 5</span>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleCompleteQuiz}>
               {(() => {
                 switch (layerQuiz) {
                   case 1:
                     return (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="tujuan" className="text-sm text-gray-600 mb-1">Hai {user.name}! Apa tujuan keuangan utamamu saat ini?</label>
-                          <SelectInput
-                            name="tujuan"
-                            options={['Pengembangan Karir', 'Pembelian Rumah', 'Pendidikan Anak', 'Pensiun', 'Pengembangan Usaha']}
-                            onChange={(e) => setTujuan(e.target.value)}
-                            value={tujuan}
-                            placeholder="Pilih Tujuan"
-                            className="border border-gray-300 rounded-md p-2"
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            Hai {user.name}! 👋 Apa tujuan keuangan utamamu saat ini?
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <CardOption tujuan={tujuan} icon="🏠" onClick={() => setTujuan("Beli Properti Pertama")} title="Beli Properti Pertama" description="Investasi properti untuk hunian pertama" />
+                            <CardOption tujuan={tujuan} icon="🚗" onClick={() => setTujuan("Beli Kendaraan")} title="Beli Kendaraan" description="Kebutuhan transportasi pribadi" />
+                            <CardOption tujuan={tujuan} icon="💒" onClick={() => setTujuan("Dana Menikah")} title="Dana Menikah" description="Persiapan pernikahan" />
+                            <CardOption tujuan={tujuan} icon="🛕" onClick={() => setTujuan("Dana Haji/Umrah")} title="Dana Haji/Umrah" description="Persiapan ibadah haji/umrah" />
+                            <CardOption tujuan={tujuan} icon="🎓" onClick={() => setTujuan("Dana Pendidikan Anak")} title="Dana Pendidikan Anak" description="Persiapan biaya pendidikan" />
+                            <CardOption tujuan={tujuan} icon="🚨" onClick={() => setTujuan("Dana Darurat")} title="Dana Darurat" description="Persiapan untuk keadaan darurat" />
+                            <CardOption tujuan={tujuan} icon="🏆" onClick={() => setTujuan("Dana Pensiun")} title="Dana Pensiun" description="Persiapan masa pensiun" />
+                            <CardOption tujuan={tujuan} icon="💰" onClick={() => setTujuan("Mengembangkan Aset")} title="Mengembangkan Aset" description="Pengembangan kekayaan" />
+                          </div>
+                        </div>
+                        <div className="flex justify-end">
+                          <button 
+                            disabled={!tujuan}
+                            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed" 
+                            onClick={(e) => { e.preventDefault(); setLayerQuiz(2); }}
                           >
-                            <option value="">Pilih Tujuan Keuangan</option>
-                            <option value="Beli Properti Pertama">🏠Beli Properti Pertama</option>
-                            <option value="Beli Kendaraan">🚗Beli Kendaraan</option>
-                            <option value="Dana Menikah">💒Dana Menikah</option>
-                            <option value="Dana Haji/Umrah">🛕Dana Haji/Umrah</option>
-                            <option value="Dana Pendidikan Anak">🎓Dana Pendidikan Anak</option>
-                            <option value="Dana Darurat">🚨Dana Darurat</option>
-                            <option value="Dana Pensiun">🏆Dana Pensiun</option>
-                            <option value="Mengembangkan Aset">💰Mengembangkan Aset</option>
-                          </SelectInput>
+                            Lanjutkan →
+                          </button>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          <CardOption tujuan={tujuan} icon="🏠"
-                            onClick={() => setTujuan("Beli Properti Pertama")}
-                            title="Beli Properti Pertama"
-                            description="Investasi properti untuk hunian pertama" />
-
-                          <CardOption tujuan={tujuan} icon="🚗"
-                            onClick={() => setTujuan("Beli Kendaraan")}
-                            title="Beli Kendaraan"
-                            description="Kebutuhan transportasi pribadi" />
-
-                          <CardOption tujuan={tujuan} icon="💒"
-                            onClick={() => setTujuan("Dana Menikah")}
-                            title="Dana Menikah"
-                            description="Persiapan pernikahan" />
-
-                          <CardOption tujuan={tujuan} icon="🛕"
-                            onClick={() => setTujuan("Dana Haji/Umrah")}
-                            title="Dana Haji/Umrah"
-                            description="Persiapan ibadah haji/umrah" />
-
-                          <CardOption tujuan={tujuan} icon="🎓"
-                            onClick={() => setTujuan("Dana Pendidikan Anak")}
-                            title="Dana Pendidikan Anak"
-                            description="Persiapan biaya pendidikan" />
-
-                          <CardOption tujuan={tujuan} icon="💒"
-                            onClick={() => setTujuan("Dana Darurat")}
-                            title="Dana Darurat"
-                            description="Persiapan untuk keadaan darurat" />
-
-                          <CardOption tujuan={tujuan} icon="🏆"
-                            onClick={() => setTujuan("Dana Pensiun")}
-                            title="Dana Pensiun"
-                            description="Persiapan masa pensiun" />
-
-                          <CardOption tujuan={tujuan} icon="💰"
-                            onClick={() => setTujuan("Mengembangkan Aset")}
-                            title="Mengembangkan Aset"
-                            description="Pengembangan kekayaan" />
-
-                        </div>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(2); }}>
-                          Lanjutkan
-                        </button>
-                      </>
+                      </div>
                     );
                   case 2:
                     return (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="targetDana" className="text-sm text-gray-600 mb-1">Berapa kira-kira dana yang kamu butuhkan? (dalam juta. Contoh: 100)</label>
-                          <InputNumber name="targetDana" value={targetDana} onChange={(e) => setTargetDana(e.target.value)} />
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                              💰 Berapa kira-kira dana yang kamu butuhkan? (dalam juta)
+                            </label>
+                            <InputNumber 
+                              name="targetDana" 
+                              value={targetDana} 
+                              onChange={(e) => setTargetDana(e.target.value)}
+                              placeHolder="Contoh: 100"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Masukkan angka tanpa kata "juta"</p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                              ⏰ Kapan kamu ingin tujuan ini tercapai?
+                            </label>
+                            <SelectInput
+                              name="jangkaWaktu"
+                              onChange={(e) => setJangkaWaktu(e.target.value)}
+                              value={jangkaWaktu}
+                            >
+                              <option value="">Pilih Jangka Waktu</option>
+                              <option value="1">&lt; 1 Tahun</option>
+                              <option value="2">1 Tahun - 3 Tahun</option>
+                              <option value="4">3 Tahun - 5 Tahun</option>
+                              <option value="5">&gt; 5 Tahun</option>
+                            </SelectInput>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="tujuan" className="text-sm text-gray-600 mb-1">Kapan kamu ingin tujuan ini tercapai?</label>
-                          <SelectInput
-                            name="tujuan"
-                            options={['Pengembangan Karir', 'Pembelian Rumah', 'Pendidikan Anak', 'Pensiun', 'Pengembangan Usaha']}
-                            onChange={(e) => setJangkaWaktu(e.target.value)}
-                            value={jangkaWaktu}
-                            placeholder="Pilih Tujuan"
-                            className="border border-gray-300 rounded-md p-2"
+                        <div className="flex justify-between">
+                          <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors" onClick={(e) => { e.preventDefault(); setLayerQuiz(1) }}>
+                            ← Kembali
+                          </button>
+                          <button 
+                            disabled={!targetDana || !jangkaWaktu}
+                            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed" 
+                            onClick={(e) => { e.preventDefault(); setLayerQuiz(3) }}
                           >
-                            <option value="1">&lt; 1 Tahun</option>
-                            <option value="2">1 Tahun - 3 Tahun</option>
-                            <option value="4">3 Tahun - 5 Tahun</option>
-                            <option value="5">&gt; 5 Tahun</option>
-                          </SelectInput>
+                            Lanjutkan →
+                          </button>
                         </div>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(1) }}>
-                          Kembali
-                        </button>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(3) }}>
-                          Lanjutkan
-                        </button>
-                      </>
+                      </div>
                     );
                   case 3:
                     return (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="usia" className="text-sm text-gray-600 mb-1">Berapa usia anda saat ini?</label>
-                          <InputNumber name="usia" value={usia} onChange={(e) => setUsia(e.target.value)} />
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                              🎂 Berapa usia kamu saat ini?
+                            </label>
+                            <InputNumber 
+                              name="usia" 
+                              value={usia} 
+                              onChange={(e) => setUsia(e.target.value)}
+                              placeHolder="Contoh: 25"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                              💵 Berapa kira-kira total pendapatan bulananmu?
+                            </label>
+                            <SelectInput
+                              name="pendapatan"
+                              onChange={(e) => setPendapatan(e.target.value)}
+                              value={pendapatan}
+                            >
+                              <option value="">Pilih rentang pendapatan</option>
+                              <option value="5">&lt; Rp 5.000.000</option>
+                              <option value="7.5">Rp 5.000.000 - Rp 10.000.000</option>
+                              <option value="15">Rp 10.000.000 - Rp 20.000.000</option>
+                              <option value="20">&gt; Rp 20.000.000</option>
+                            </SelectInput>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="pendapatan" className="text-sm text-gray-600 mb-1">Berapa kira-kira total pendapatan bulananmu?</label>
-                          <SelectInput
-                            name="pendapatan"
-                            options={['Pengembangan Karir', 'Pembelian Rumah', 'Pendidikan Anak', 'Pensiun', 'Pengembangan Usaha']}
-                            onChange={(e) => setPendapatan(e.target.value)}
-                            value={pendapatan}
-                            placeholder="Silahkan pilih"
-                            className="border border-gray-300 rounded-md p-2"
+                        <div className="flex justify-between">
+                          <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors" onClick={(e) => { e.preventDefault(); setLayerQuiz(2) }}>
+                            ← Kembali
+                          </button>
+                          <button 
+                            disabled={!usia || !pendapatan}
+                            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed" 
+                            onClick={(e) => { e.preventDefault(); setLayerQuiz(4) }}
                           >
-                            <option value="5">&lt; Rp 5.000.000</option>
-                            <option value="7.5">Rp 5.000.000 - Rp 10.000.000</option>
-                            <option value="15">Rp 10.000.000 - Rp 20.000.000</option>
-                            <option value="20">&gt; Rp 20.000.000</option>
-                          </SelectInput>
+                            Lanjutkan →
+                          </button>
                         </div>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(2) }}>
-                          Kembali
-                        </button>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(4) }}>
-                          Lanjutkan
-                        </button>
-                      </>
+                      </div>
                     );
                   case 4:
                     return (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="pemahaman" className="text-sm text-gray-600 mb-1">Seberapa jauh pemahamanmu tentang investasi?</label>
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-lg font-semibold text-gray-900 mb-4">
+                            🧠 Seberapa jauh pemahamanmu tentang investasi?
+                          </label>
                           <div className="space-y-3">
-                            <InputRadio
-                              id="pemahaman-1"
-                              name="pemahaman"
-                              label="Baru mau coba, istilahnya aja masih asing"
-                              value="Pemula"
-                              onChange={(e) => setPemahaman(e.target.value)} />
-
-                            <InputRadio
-                              id="pemahaman-2"
-                              name="pemahaman"
-                              label="Sudah pernah investasi, tahu bedanya saham dan reksa dana"
-                              value="Menengah"
-                              onChange={(e) => setPemahaman(e.target.value)} />
-
-                            <InputRadio
-                              id="pemahaman-3"
-                              name="pemahaman"
-                              label="Cukup paham, saya rutin memantau kondisi pasar"
-                              value="Mahir"
-                              onChange={(e) => setPemahaman(e.target.value)} />
+                            <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors cursor-pointer" 
+                                 onClick={() => setPemahaman('Pemula')}>
+                              <InputRadio id="pemahaman-1" name="pemahaman" label="Baru mau coba, istilahnya aja masih asing 🤷‍♂️" value="Pemula" onChange={(e) => setPemahaman(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors cursor-pointer"
+                                 onClick={() => setPemahaman('Menengah')}>
+                              <InputRadio id="pemahaman-2" name="pemahaman" label="Sudah pernah investasi, tahu bedanya saham dan reksa dana 📊" value="Menengah" onChange={(e) => setPemahaman(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors cursor-pointer"
+                                 onClick={() => setPemahaman('Mahir')}>
+                              <InputRadio id="pemahaman-3" name="pemahaman" label="Cukup paham, saya rutin memantau kondisi pasar 📈" value="Mahir" onChange={(e) => setPemahaman(e.target.value)} />
+                            </div>
                           </div>
                         </div>
-                        <br />
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="behavior" className="text-sm text-gray-600 mb-1">Bayangkan nilai investasimu tiba-tiba anjlok 20% dalam sebulan. Apa yang akan kamu lakukan?</label>
+                        
+                        <div>
+                          <label className="block text-lg font-semibold text-gray-900 mb-4">
+                            😱 Bayangkan nilai investasimu tiba-tiba anjlok 20% dalam sebulan. Apa yang akan kamu lakukan?
+                          </label>
                           <div className="space-y-3">
-                            <InputRadio
-                              id="behavior-1"
-                              name="behavior"
-                              label="Panik! Saya akan jual sebagian besar agar tidak rugi lebih banyak"
-                              value="1"
-                              onChange={(e) => setBehavior(e.target.value)} />
-
-
-                            <InputRadio
-                              id="behavior-2"
-                              name="behavior"
-                              label="Khawatir, tapi saya akan diamkan dan tunggu sampai pulih"
-                              value="3"
-                              onChange={(e) => setBehavior(e.target.value)} />
-
-                            <InputRadio
-                              id="behavior-3"
-                              name="behavior"
-                              label="Tenang. Justru ini kesempatan untuk beli lagi di harga murah"
-                              value="5"
-                              onChange={(e) => setBehavior(e.target.value)} />
+                            <div className="border rounded-lg p-4 hover:bg-red-50 transition-colors cursor-pointer"
+                                 onClick={() => setBehavior('1')}>
+                              <InputRadio id="behavior-1" name="behavior" label="Panik! Saya akan jual sebagian besar agar tidak rugi lebih banyak 😰" value="1" onChange={(e) => setBehavior(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-yellow-50 transition-colors cursor-pointer"
+                                 onClick={() => setBehavior('3')}>
+                              <InputRadio id="behavior-2" name="behavior" label="Khawatir, tapi saya akan diamkan dan tunggu sampai pulih 😐" value="3" onChange={(e) => setBehavior(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-green-50 transition-colors cursor-pointer"
+                                 onClick={() => setBehavior('5')}>
+                              <InputRadio id="behavior-3" name="behavior" label="Tenang. Justru ini kesempatan untuk beli lagi di harga murah 😎" value="5" onChange={(e) => setBehavior(e.target.value)} />
+                            </div>
                           </div>
                         </div>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(3) }}>
-                          Kembali
-                        </button>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(5) }}>
-                          Lanjutkan
-                        </button>
-                      </>
+                        <div className="flex justify-between">
+                          <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors" onClick={(e) => { e.preventDefault(); setLayerQuiz(3) }}>
+                            ← Kembali
+                          </button>
+                          <button 
+                            disabled={!pemahaman || !behavior}
+                            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed" 
+                            onClick={(e) => { e.preventDefault(); setLayerQuiz(5) }}
+                          >
+                            Lanjutkan →
+                          </button>
+                        </div>
+                      </div>
                     );
                   case 5:
                     return (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="priority" className="text-sm text-gray-600 mb-1">Dalam berinvestasi, mana yang lebih penting untukmu?</label>
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-lg font-semibold text-gray-900 mb-4">
+                            🎯 Dalam berinvestasi, mana yang lebih penting untukmu?
+                          </label>
                           <div className="space-y-3">
-                            <InputRadio
-                              id="priority-1"
-                              name="priority"
-                              label="Pokoknya uangku aman, untung sedikit tidak apa-apa"
-                              value="1"
-                              onChange={(e) => setPriority(e.target.value)} />
-
-                            <InputRadio
-                              id="priority-2"
-                              name="priority"
-                              label="Siap terima risiko tinggi untuk untung besar"
-                              value="5"
-                              onChange={(e) => setPriority(e.target.value)} />
+                            <div className="border rounded-lg p-4 hover:bg-green-50 transition-colors cursor-pointer"
+                                 onClick={() => setPriority('1')}>
+                              <InputRadio id="priority-1" name="priority" label="Pokoknya uangku aman, untung sedikit tidak apa-apa 🛡️" value="1" onChange={(e) => setPriority(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-red-50 transition-colors cursor-pointer"
+                                 onClick={() => setPriority('5')}>
+                              <InputRadio id="priority-2" name="priority" label="Siap terima risiko tinggi untuk untung besar 🚀" value="5" onChange={(e) => setPriority(e.target.value)} />
+                            </div>
                           </div>
                         </div>
-                        <br />
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="jenisInvestasi" className="text-sm text-gray-600 mb-1">Jika diberi pilihan, produk mana yang paling membuatmu merasa 'aman' untuk dicoba?</label>
+                        
+                        <div>
+                          <label className="block text-lg font-semibold text-gray-900 mb-4">
+                            💼 Jika diberi pilihan, produk mana yang paling membuatmu merasa 'aman' untuk dicoba?
+                          </label>
                           <div className="space-y-3">
-                            <InputRadio
-                              id="jenisInvestasi-3"
-                              name="jenisInvestasi"
-                              label="Deposito atau Emas"
-                              value="1"
-                              onChange={(e) => setJenisInvestasi(e.target.value)} />
-
-                            <InputRadio
-                              id="jenisInvestasi-2"
-                              name="jenisInvestasi"
-                              label="Reksa Dana"
-                              value="3"
-                              onChange={(e) => setJenisInvestasi(e.target.value)} />
-
-                            <InputRadio
-                              id="jenisInvestasi-3"
-                              name="jenisInvestasi"
-                              label="Saham"
-                              value="5"
-                              onChange={(e) => setJenisInvestasi(e.target.value)} />
+                            <div className="border rounded-lg p-4 hover:bg-green-50 transition-colors cursor-pointer"
+                                 onClick={() => setJenisInvestasi('1')}>
+                              <InputRadio id="jenisInvestasi-1" name="jenisInvestasi" label="Deposito atau Emas 🥇" value="1" onChange={(e) => setJenisInvestasi(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors cursor-pointer"
+                                 onClick={() => setJenisInvestasi('3')}>
+                              <InputRadio id="jenisInvestasi-2" name="jenisInvestasi" label="Reksa Dana 📊" value="3" onChange={(e) => setJenisInvestasi(e.target.value)} />
+                            </div>
+                            <div className="border rounded-lg p-4 hover:bg-red-50 transition-colors cursor-pointer"
+                                 onClick={() => setJenisInvestasi('5')}>
+                              <InputRadio id="jenisInvestasi-3" name="jenisInvestasi" label="Saham 📈" value="5" onChange={(e) => setJenisInvestasi(e.target.value)} />
+                            </div>
                           </div>
                         </div>
-                        <button className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4" onClick={(e) => { e.preventDefault(); setLayerQuiz(4) }}>
-                          Kembali
-                        </button>
-                        <button
-                          className="bg-secondary hover:bg-secondary-light text-white px-6 py-2 rounded-md font-medium transition-colors mt-4"
-                          type='submit'
-                        >
-                          Selesai
-                        </button>
-                      </>
+                        <div className="flex justify-between">
+                          <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors" onClick={(e) => { e.preventDefault(); setLayerQuiz(4) }}>
+                            ← Kembali
+                          </button>
+                          <button
+                            disabled={!priority || !jenisInvestasi}
+                            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 disabled:cursor-not-allowed"
+                            type='submit'
+                          >
+                            🎉 Selesai Assessment
+                          </button>
+                        </div>
+                      </div>
                     );
                   default:
                     return null;
                 }
               })()}
-
             </form>
           </div>
-        )
-        }
-
-        {/* Investment Options */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">Rekomendasi Investasi</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h3 className="font-semibold mb-2">Reksa Dana</h3>
-              <p className="text-sm text-gray-600 mb-3">Investasi yang dikelola profesional dengan risiko terukur</p>
-              <button className="text-primary hover:underline text-sm">Pelajari Lebih Lanjut →</button>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h3 className="font-semibold mb-2">Saham</h3>
-              <p className="text-sm text-gray-600 mb-3">Kepemilikan perusahaan dengan potensi return tinggi</p>
-              <button className="text-primary hover:underline text-sm">Pelajari Lebih Lanjut →</button>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h3 className="font-semibold mb-2">Obligasi</h3>
-              <p className="text-sm text-gray-600 mb-3">Surat utang dengan bunga tetap dan risiko rendah</p>
-              <button className="text-primary hover:underline text-sm">Pelajari Lebih Lanjut →</button>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h3 className="font-semibold mb-2">Emas</h3>
-              <p className="text-sm text-gray-600 mb-3">Aset safe haven untuk lindung nilai inflasi</p>
-              <button className="text-primary hover:underline text-sm">Pelajari Lebih Lanjut →</button>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
-    </AppLayout >
+    </AppLayout>
   );
 };
 

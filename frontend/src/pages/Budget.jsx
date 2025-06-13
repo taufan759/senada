@@ -240,8 +240,8 @@ const Budget = () => {
 
   return (
     <AppLayout>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 mt-16 lg:mt-0">
+       {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8">
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Anggaran</h1>
           <p className="text-gray-600 mt-1 text-sm sm:text-base">Kelola dan pantau anggaran keuangan Anda</p>
@@ -255,7 +255,6 @@ const Budget = () => {
           </button>
         </div>
       </div>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">

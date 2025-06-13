@@ -11,6 +11,7 @@ const Sidebar = () => {
     role: 'user'
   });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: '🏠', gradient: 'from-blue-500 to-cyan-400' },
@@ -21,9 +22,8 @@ const Sidebar = () => {
       path: '/ml-insights', 
       icon: '🤖', 
       gradient: 'from-yellow-500 to-orange-400',
-      isNew: true // Badge untuk fitur baru
+      isNew: true
     },
-    { title: 'Tujuan', path: '/goals', icon: '🎯', gradient: 'from-orange-500 to-red-400' },
     { title: 'Investasi', path: '/investment', icon: '📈', gradient: 'from-indigo-500 to-purple-400' },
     { title: 'Laporan', path: '/reports', icon: '📋', gradient: 'from-teal-500 to-cyan-400' },
   ];
@@ -71,9 +71,47 @@ const Sidebar = () => {
 
   const roleInfo = getRoleDisplay(userInfo.role);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <>
-      <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white w-72 min-h-screen flex flex-col shadow-2xl relative overflow-hidden">
+      {/* Mobile Header - Hanya muncul di mobile */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-4 shadow-lg">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-lg font-bold text-white">S</span>
+            </div>
+            <span className="text-xl font-bold">SENADA</span>
+          </Link>
+          
+          {/* Hamburger Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+          >
+            <div className="space-y-1">
+              <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+              <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+              <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
+      )}
+
+      {/* Desktop Sidebar (Asli) */}
+      <div className="hidden lg:flex bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white w-72 min-h-screen flex-col shadow-2xl relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-cyan-500/10"></div>
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 blur-3xl"></div>
@@ -142,6 +180,116 @@ const Sidebar = () => {
           {/* Profile Card */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 mb-3 border border-white/20 shadow-lg">
             <Link to="/profile" className="block group">
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}&background=6366f1&color=ffffff&size=40&rounded=true&bold=true`}
+                    alt="User"
+                    className="w-12 h-12 rounded-full ring-2 ring-blue-400/50 group-hover:ring-blue-400 transition-all duration-300"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-blue-900 animate-pulse"></div>
+                </div>
+                <div className="flex-grow">
+                  <p className="font-semibold text-white group-hover:text-blue-300 transition-colors duration-300 truncate">
+                    {userInfo.name}
+                  </p>
+                  <div className="flex items-center space-x-1 mt-1">
+                    <span className="text-xs">{roleInfo.icon}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${roleInfo.color} text-white font-medium`}>
+                      {roleInfo.text}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            className="w-full flex items-center space-x-3 p-4 rounded-2xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 transition-all duration-300 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300">
+              <span className="text-lg">🚪</span>
+            </div>
+            <span className="font-medium text-red-300 group-hover:text-red-200 transition-colors duration-300">
+              Logout
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white min-h-screen flex flex-col shadow-2xl relative overflow-hidden transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-cyan-500/10"></div>
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-full h-32 bg-gradient-to-tl from-cyan-400/20 to-blue-600/20 blur-3xl"></div>
+        
+        {/* Header */}
+        <div className="relative z-10 p-6 border-b border-white/10 backdrop-blur-sm">
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg">
+              <span className="text-2xl font-bold text-white">S</span>
+            </div>
+            <div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
+                SENADA
+              </span>
+              <p className="text-xs text-gray-300 -mt-1">Financial Manager</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-grow p-4 relative z-10">
+          <div className="space-y-2">
+            {menuItems.map((item, index) => (
+              <div key={index} className="relative group">
+                <Link
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 relative overflow-hidden ${
+                    isActive(item.path)
+                      ? 'bg-white/20 backdrop-blur-md shadow-lg transform scale-105 border border-white/20'
+                      : 'hover:bg-white/10 hover:backdrop-blur-md hover:transform hover:scale-102 hover:shadow-md'
+                  }`}
+                >
+                  {/* Icon container */}
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300`}>
+                    <span className="text-lg">{item.icon}</span>
+                  </div>
+                  
+                  {/* Text */}
+                  <span className="font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
+                    {item.title}
+                  </span>
+                  
+                  {/* New Badge */}
+                  {item.isNew && (
+                    <span className="ml-auto bg-gradient-to-r from-yellow-400 to-orange-400 text-xs px-2 py-1 rounded-full text-blue-900 font-bold animate-pulse">
+                      NEW
+                    </span>
+                  )}
+                  
+                  {/* Active indicator */}
+                  {isActive(item.path) && (
+                    <div className="absolute right-3 w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"></div>
+                  )}
+                  
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-400/5 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </nav>
+
+        {/* User Profile Section */}
+        <div className="relative z-10 p-4 border-t border-white/10 backdrop-blur-sm">
+          {/* Profile Card */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 mb-3 border border-white/20 shadow-lg">
+            <Link to="/profile" className="block group" onClick={() => setIsMobileMenuOpen(false)}>
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <img

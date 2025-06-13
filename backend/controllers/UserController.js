@@ -71,3 +71,70 @@ export const register = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+// Tambahan untuk update profil
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Dari middleware verifyToken
+    const { name, email, phone, address, dateOfBirth, occupation } = req.body;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    await user.update({
+      name: name || user.name,
+      email: email || user.email,
+      // Jika ingin menambah field lain, update model dulu
+    });
+
+    res.status(200).json({ 
+      msg: "Profile updated successfully",
+      user: {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Fungsi untuk ubah password
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Dari middleware verifyToken
+    const { currentPassword, newPassword } = req.body;
+
+    // Validasi input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ msg: "Current password and new password are required" });
+    }
+
+    // Cari user
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    // Verifikasi password lama
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Current password is incorrect" });
+
+    // Hash password baru
+    const salt = await bcrypt.genSalt();
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password di database
+    await user.update({
+      password: hashedNewPassword
+    });
+
+    res.status(200).json({ msg: "Password updated successfully" });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
+

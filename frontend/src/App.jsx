@@ -9,9 +9,9 @@ import Transaction from './pages/Transaction';
 import Profile from './pages/Profile'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import Budget from './pages/Budget';
-import AppLayout from './components/AppLayouts';
 import Articles from './pages/Articles';
 import MLInsights from './pages/MLInsights';
+import Reports from './pages/Reports';
 
 function App() {
   return (
@@ -51,34 +51,20 @@ function App() {
           </ProtectedRoute>
         } />
         
-        {/*  */}
+        {/* Reports Route */}
+        <Route path="/reports" element={
+          <ProtectedRoute allowedRoles={['user', 'admin']}>
+            <Reports />
+          </ProtectedRoute>
+        } />
+        
+        {/* Profile Route */}
         <Route path="/profile" element={
           <ProtectedRoute allowedRoles={['user', 'admin']}>
             <Profile />
           </ProtectedRoute>
         } />
-
-        {/* Placeholder pages using AppLayout */}
-        <Route path="/goals" element={
-          <ProtectedRoute allowedRoles={['user', 'admin']}>
-            <AppLayout>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h1 className="text-2xl font-bold">Tujuan Keuangan - Coming Soon</h1>
-              </div>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/reports" element={
-          <ProtectedRoute allowedRoles={['user', 'admin']}>
-            <AppLayout>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h1 className="text-2xl font-bold">Laporan - Coming Soon</h1>
-              </div>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
         
-        {/**/}
       </Routes>
     </Router>
   );
